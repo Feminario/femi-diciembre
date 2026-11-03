@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cierre de Año con Feminario</title>
+<link rel="icon" href="assets/forma-estrella-morada.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=MuseoModerno:wght@500;700;800&family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/marca.css">
+<style>
+  #app{ max-width:600px; margin:0 auto; padding:26px 18px 60px; position:relative; }
+  .brand-header{ display:flex; justify-content:center; margin-bottom:14px; }
+  .brand-header img{ height:46px; width:auto; }
+
+  .progreso{ display:flex; justify-content:center; align-items:center; gap:7px; margin:0 0 16px; }
+  .dot{ width:9px; height:9px; border-radius:50%; background:rgba(126,132,174,.25); transition:all .25s; }
+  .dot.hecho{ background:var(--lavanda); }
+  .dot.activo{ background:var(--morado); width:26px; border-radius:6px; }
+  .paso-txt{ text-align:center; font-size:12px; color:var(--morado-suave); margin:-8px 0 16px; font-weight:600; letter-spacing:.3px; }
+
+  .screen{ animation:entra .45s ease both; }
+  @keyframes entra{ from{ opacity:0; transform:translateY(14px); } to{ opacity:1; transform:none; } }
+
+  /* Foto hero */
+  .foto-hero{ position:relative; border-radius:30px; overflow:hidden; box-shadow:0 20px 50px rgba(76,79,104,.22); margin-bottom:18px; background:var(--periwinkle); }
+  .foto-hero img.foto{ display:block; width:100%; height:300px; object-fit:cover; }
+  .foto-hero.alto img.foto{ height:380px; }
+  .foto-hero::after{ content:""; position:absolute; inset:0; background:linear-gradient(180deg,rgba(76,79,104,0) 45%,rgba(76,79,104,.72) 100%); }
+  .foto-hero .pie{ position:absolute; left:0; right:0; bottom:0; padding:20px 22px; z-index:2; color:#fff; }
+  .foto-hero .pie h2{ color:#fff; font-size:28px; margin:0 0 4px; text-shadow:0 2px 12px rgba(0,0,0,.25); }
+  .foto-hero .pie p{ margin:0; font-size:14.5px; opacity:.95; }
+  .estrella{ position:absolute; z-index:3; width:46px; animation:gira 9s linear infinite; }
+  .estrella.e1{ top:-8px; right:14px; } .estrella.e2{ top:48px; left:-10px; width:36px; animation-direction:reverse; }
+  @keyframes gira{ to{ transform:rotate(360deg); } }
+
+  .ilus-cabecera{ display:flex; align-items:center; gap:14px; margin-bottom:6px; }
+  .ilus-cabecera img{ height:84px; width:auto; flex-shrink:0; }
+  .ilus-cabecera h2{ margin:0; }
+  .kicker{ font-size:12px; font-weight:800; letter-spacing:1.3px; text-transform:uppercase; color:var(--lavanda); filter:saturate(1.4) brightness(.85); margin-bottom:4px; }
+
+  .opciones{ display:flex; flex-direction:column; gap:9px; }
+  .opcion{ border:1.5px solid rgba(126,132,174,.25); border-radius:16px; padding:13px 16px; cursor:pointer; font-size:14.5px; transition:all .15s; background:rgba(255,255,255,.55); text-align:left; font-family:inherit; color:var(--texto); }
+  .opcion:hover{ border-color:var(--morado); }
+  .opcion.sel{ border-color:var(--morado); background:linear-gradient(135deg,rgba(194,203,255,.6),rgba(206,162,221,.42)); font-weight:700; color:var(--morado-oscuro); }
+
+  .microcopy{ font-size:13px; color:var(--morado-oscuro); background:rgba(194,203,255,.35); border-radius:14px; padding:12px 16px; margin:0 0 6px; }
+  .acciones{ display:flex; gap:10px; }
+  .acciones .btn{ margin-top:22px; }
+  .acciones .btn.secundario{ width:auto; flex:0 0 auto; padding-left:22px; padding-right:22px; }
+
+  /* Transición con foto */
+  .trans .foto-hero img.foto{ height:420px; }
+  .trans .pie h2{ font-size:31px; }
+
+  /* Montos */
+  .monto-grid{ display:grid; gap:2px; }
+  .monto-wrap{ position:relative; }
+  .monto-wrap span{ position:absolute; left:16px; top:50%; transform:translateY(-50%); color:var(--morado-suave); font-weight:700; }
+  .monto-wrap input{ padding-left:32px; }
+  .grupo-titulo{ margin:22px 0 0; font-weight:800; color:var(--morado); font-size:14px; display:flex; align-items:center; gap:8px; }
+  .grupo-titulo i{ width:12px; height:12px; border-radius:50%; display:inline-block; }
+
+  /* Panel de balance */
+  .hero-balance{ text-align:center; background:linear-gradient(135deg,rgba(194,203,255,.6),rgba(206,162,221,.5)); border-radius:26px; padding:26px 18px 22px; margin:6px 0 16px; position:relative; overflow:hidden; }
+  .hero-balance .rotulo{ font-size:12.5px; text-transform:uppercase; letter-spacing:1.2px; font-weight:700; color:var(--morado-oscuro); }
+  .hero-balance .monto{ font-family:'MuseoModerno',sans-serif; font-size:40px; font-weight:800; color:var(--morado-oscuro); margin:4px 0; letter-spacing:-.5px; }
+  .hero-balance .frase{ font-size:14px; color:var(--morado-oscuro); opacity:.85; max-width:380px; margin:0 auto; }
+  .hero-balance img.deco{ position:absolute; width:54px; opacity:.9; }
+  .stack{ display:flex; width:100%; height:26px; border-radius:12px; overflow:hidden; background:rgba(126,132,174,.14); }
+  .stack div{ border-right:2px solid rgba(255,255,255,.8); }
+  .stack div:last-child{ border-right:none; }
+  .leyenda{ display:flex; flex-wrap:wrap; gap:8px 16px; margin:12px 0 4px; font-size:12.5px; }
+  .leyenda span{ display:flex; align-items:center; gap:6px; font-weight:600; color:var(--morado-oscuro); }
+  .leyenda i{ width:11px; height:11px; border-radius:50%; display:inline-block; }
+  .medidor{ background:rgba(255,255,255,.72); border-radius:20px; padding:16px 18px; margin:12px 0; border:1px solid rgba(126,132,174,.15); }
+  .medidor .fila{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; }
+  .medidor .nombre{ font-weight:800; font-size:13.5px; color:var(--morado-oscuro); }
+  .medidor .valor{ font-family:'MuseoModerno',sans-serif; font-weight:800; font-size:22px; color:var(--morado-oscuro); }
+  .barra{ height:10px; border-radius:6px; background:rgba(126,132,174,.16); margin:9px 0 8px; overflow:hidden; }
+  .barra b{ display:block; height:100%; border-radius:6px; background:linear-gradient(90deg,var(--periwinkle),var(--morado)); transition:width 1s cubic-bezier(.2,.8,.2,1); width:0; }
+  .barra b.verde{ background:linear-gradient(90deg,var(--verde),#9ccf5f); }
+  .barra b.rosa{ background:linear-gradient(90deg,var(--rosa-claro),var(--lavanda)); }
+  .medidor .msg{ font-size:13.5px; margin:0; color:var(--texto); }
+  .meta-recuerdo{ background:rgba(223,243,175,.5); border-radius:18px; padding:14px 18px; font-size:14px; margin:14px 0 0; }
+  .meta-recuerdo b{ color:var(--morado-oscuro); }
+
+  /* Cierre */
+  .resumen{ background:rgba(255,255,255,.7); border-radius:20px; padding:16px 18px; margin:12px 0; }
+  .resumen h3{ display:flex; align-items:center; gap:8px; }
+  .resumen q{ font-style:italic; quotes:"“" "”"; }
+  .chip{ display:inline-block; font-size:12px; font-weight:800; padding:4px 11px; border-radius:999px; background:rgba(194,203,255,.5); color:var(--morado-oscuro); margin-bottom:6px; }
+  .chip.si{ background:var(--verde); } .chip.cam{ background:var(--periwinkle); } .chip.no{ background:var(--rosa-claro); }
+  .palabra-2027{ text-align:center; font-family:'MuseoModerno',sans-serif; font-size:34px; font-weight:800; color:var(--morado-oscuro); margin:6px 0 2px; }
+  .cta{ background:linear-gradient(135deg,rgba(206,162,221,.6),rgba(194,203,255,.55)); border-radius:24px; padding:22px; margin:18px 0 0; text-align:center; }
+  .cta img{ height:96px; margin-bottom:4px; }
+  .cta h3{ font-size:20px; color:var(--morado-oscuro); }
+  .toast{ position:fixed; left:50%; bottom:22px; transform:translateX(-50%); background:var(--morado-oscuro); color:#fff; padding:11px 20px; border-radius:999px; font-size:13.5px; font-weight:600; z-index:300; box-shadow:0 10px 30px rgba(0,0,0,.25); }
+  .error{ color:var(--alerta); font-size:13px; font-weight:600; margin-top:8px; min-height:18px; }
+</style>
+</head>
+<body>
+<div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div><div class="blob blob-4"></div>
+
+<div id="app">
+  <div class="brand-header"><img src="assets/logo-feminario.png" alt="Feminario"></div>
+  <div id="progreso"></div>
+  <div id="vista"></div>
+</div>
+
+<script src="assets/config.js"></script>
+<script src="assets/confeti.js"></script>
+<script>
+/* ============================================================
+   ESTADO — se guarda en el navegador y se envía al Sheet
+   (si CIERRE.API_URL está configurada) después de cada paso.
+   ============================================================ */
+const CFG = window.CIERRE;
+function uid(){ return "c" + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+const S = { id: uid(), nombre:"", gusta:"", ayuda:"", meta:"", cumplida:"", falta:"", bal:{ ahorro:"", inversion:"", otros:"", deudas:"", ingreso:"", gasto:"" }, faltoAno:"", mejorar:"", palabra:"" };
+
+function guardarLocal(){
+  try{
+    const todo = JSON.parse(localStorage.getItem(CFG.STORAGE_KEY) || "{}");
+    todo[S.id] = Object.assign({}, S, { fecha: new Date().toISOString() });
+    localStorage.setItem(CFG.STORAGE_KEY, JSON.stringify(todo));
+  }catch(e){}
+}
+function enviar(){
+  guardarLocal();
+  if(!CFG.API_URL) return;
+  const b = S.bal;
+  const payload = { tipo:"cierre_dic", id:S.id, nombre:S.nombre, gusta:S.gusta, ayuda:S.ayuda, meta:S.meta, cumplida:S.cumplida, falta:S.falta,
+    ahorro:num(b.ahorro), inversion:num(b.inversion), otros:num(b.otros), deudas:num(b.deudas), ingreso:num(b.ingreso), gasto:num(b.gasto),
+    faltoAno:S.faltoAno, mejorar:S.mejorar, palabra:S.palabra };
+  fetch(CFG.API_URL, { method:"POST", mode:"no-cors", headers:{"Content-Type":"text/plain"}, body:JSON.stringify(payload) }).catch(()=>{});
+}
+
+/* ---------- utilidades ---------- */
+const $ = (s, r=document) => r.querySelector(s);
+function esc(t){ return String(t==null?"":t).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function num(v){ return Number(String(v||"").replace(/\D/g,"")) || 0; }
+function cop(v){ return "$" + Math.round(v).toLocaleString("es-CO"); }
+function primerNombre(){ return (S.nombre || "").trim().split(/\s+/)[0] || "tú"; }
+function toast(t){ const el = document.createElement("div"); el.className="toast"; el.textContent=t; document.body.appendChild(el); setTimeout(()=>el.remove(), 2600); }
+
+/* ---------- recorrido ---------- */
+const PASOS = ["bienvenida","gusta","t1","meta","t2","balance","panel","t3","reflexion","cierre"];
+const PRINCIPALES = ["gusta","meta","balance","reflexion","cierre"];   // los puntos de progreso
+let actual = "bienvenida";
+
+function pintarProgreso(){
+  const cont = $("#progreso");
+  const grupoDe = { bienvenida:-1, gusta:0, t1:0, meta:1, t2:1, balance:2, panel:2, t3:3, reflexion:3, cierre:4 };
+  const g = grupoDe[actual];
+  if(g < 0){ cont.innerHTML = ""; return; }
+  cont.innerHTML = `<div class="progreso">${PRINCIPALES.map((_,i)=>`<div class="dot ${i<g?"hecho":""} ${i===g?"activo":""}"></div>`).join("")}</div>
+    <div class="paso-txt">Paso ${g+1} de ${PRINCIPALES.length}</div>`;
+}
+function ir(id, celebrar){
+  actual = id; pintarProgreso();
+  const v = $("#vista"); v.innerHTML = `<div class="screen">${VISTAS[id]()}</div>`;
+  window.scrollTo({ top:0, behavior:"smooth" });
+  if(VISTAS_INIT[id]) VISTAS_INIT[id]();
+  if(celebrar) setTimeout(() => lanzarConfeti(), 250);
+}
+function siguiente(celebrar){ ir(PASOS[PASOS.indexOf(actual)+1], celebrar); }
+function anterior(){ ir(PASOS[PASOS.indexOf(actual)-1]); }
+function opcionesSel(cont, onSel){
+  cont.querySelectorAll(".opcion").forEach(b => b.addEventListener("click", () => {
+    cont.querySelectorAll(".opcion").forEach(x => x.classList.remove("sel")); b.classList.add("sel"); onSel(b.dataset.v);
+  }));
+}
+function btnsNav(opts){
+  opts = opts || {};
+  return `<div class="acciones">${opts.sinAtras ? "" : `<button class="btn secundario" id="atras" type="button">←</button>`}<button class="btn" id="sig" type="button">${opts.texto || "Siguiente"}</button></div>`;
+}
+function nav(opts, onNext){
+  const a = $("#atras"); if(a) a.addEventListener("click", anterior);
+  $("#sig").addEventListener("click", onNext);
+}
+
+/* ============================================================
+   VISTAS
+   ============================================================ */
+const VISTAS = {};
+const VISTAS_INIT = {};
+
+/* 0 — Bienvenida */
+VISTAS.bienvenida = () => `
+  <div class="foto-hero alto">
+    <img class="foto" src="assets/foto-ventana.jpg" alt="Dos mujeres celebrando frente a la ciudad" style="object-position:50% 45%">
+    <img class="estrella e1" src="assets/forma-estrella.png" alt=""><img class="estrella e2" src="assets/forma-sol.png" alt="">
+    <div class="pie"><h2>Cerramos el año juntas</h2><p>${esc(CFG.FECHA_LABEL)} · Cierre de mes Feminario</p></div>
+  </div>
+  <div class="card">
+    <p class="lead">Vamos a mirar el año con cariño: lo que te gusta de Feminario, la meta con la que empezaste, cómo estás hoy y qué quieres para el próximo.</p>
+    <p class="suave" style="margin-bottom:0">Son 4 pasos cortos. No hay respuestas buenas ni malas.</p>
+    <label for="nombre">¿Cómo te llamas?</label>
+    <input type="text" id="nombre" placeholder="Tu nombre" autocomplete="given-name" value="${esc(S.nombre)}">
+    <div class="error" id="err"></div>
+    <button class="btn" id="sig" type="button" style="margin-top:8px">Empezar ✨</button>
+  </div>`;
+VISTAS_INIT.bienvenida = () => {
+  const go = () => {
+    const n = $("#nombre").value.trim();
+    if(!n){ $("#err").textContent = "Cuéntame tu nombre para empezar 💜"; return; }
+    S.nombre = n; enviar(); siguiente(true);
+  };
+  $("#sig").addEventListener("click", go);
+  $("#nombre").addEventListener("keydown", e => { if(e.key === "Enter") go(); });
+};
+
+/* 1 — Lo que más me gusta de Feminario */
+VISTAS.gusta = () => `
+  <div class="card">
+    <div class="kicker">Paso 1</div>
+    <div class="ilus-cabecera"><div><h2>Hola, ${esc(primerNombre())} 💜</h2><p class="suave" style="margin:0">Empecemos por lo bonito.</p></div><img src="assets/ilus-arbol.png" alt=""></div>
+    <label for="gusta">¿Qué es lo que más te gusta de Feminario?</label>
+    <textarea id="gusta" placeholder="Con tus palabras, sin filtro…">${esc(S.gusta)}</textarea>
+    <label for="ayuda">¿Cómo te ha ayudado en tus finanzas este año?</label>
+    <textarea id="ayuda" placeholder="Algo que hoy haces distinto, algo que entendiste, algo que lograste…">${esc(S.ayuda)}</textarea>
+    <div class="error" id="err"></div>
+    ${btnsNav({ sinAtras:true, texto:"Seguir ✨" })}
+  </div>`;
+VISTAS_INIT.gusta = () => nav({}, () => {
+  S.gusta = $("#gusta").value.trim(); S.ayuda = $("#ayuda").value.trim();
+  if(!S.gusta){ $("#err").textContent = "Cuéntame aunque sea una cosa que te guste 💜"; return; }
+  enviar(); siguiente(true);
+});
+
+/* t1 — transición con foto */
+VISTAS.t1 = () => `
+  <div class="trans"><div class="foto-hero">
+    <img class="foto" src="assets/foto-sonrisas.jpg" alt="Dos mujeres sonriendo" style="object-position:50% 25%">
+    <img class="estrella e1" src="assets/forma-estrella-naranja.png" alt=""><img class="estrella e2" src="assets/forma-destello.png" alt="">
+    <div class="pie"><h2>¡Qué lindo leerte, ${esc(primerNombre())}!</h2><p>Ahora vamos a tu meta de inicio de año.</p></div>
+  </div>${btnsNav({ sinAtras:true, texto:"Vamos 🎯" })}</div>`;
+VISTAS_INIT.t1 = () => nav({}, () => siguiente(false));
+
+/* 2 — Meta */
+VISTAS.meta = () => `
+  <div class="card">
+    <div class="kicker">Paso 2</div>
+    <div class="ilus-cabecera"><h2>Tu meta de este año</h2><img src="assets/ilus-diana.png" alt=""></div>
+    <label for="meta">A inicio de año, mi meta financiera era…</label>
+    <textarea id="meta" placeholder="Escríbela tal cual la dirías en voz alta">${esc(S.meta)}</textarea>
+    <label>¿Cómo vas con ella?</label>
+    <div class="opciones" id="ops">
+      <button class="opcion" data-v="si" type="button">🎉 ¡La cumplí!</button>
+      <button class="opcion" data-v="camino" type="button">🌱 Voy en camino</button>
+      <button class="opcion" data-v="no" type="button">⏳ Todavía no</button>
+      <button class="opcion" data-v="cambio" type="button">🔄 Cambió y ahora quiero otra cosa</button>
+    </div>
+    <label for="falta">Lo que me falta para llegar es…</label>
+    <textarea id="falta" placeholder="Dinero, constancia, claridad, un plan, compañía… lo que sea">${esc(S.falta)}</textarea>
+    <div class="error" id="err"></div>
+    ${btnsNav({})}
+  </div>`;
+VISTAS_INIT.meta = () => {
+  const ops = $("#ops");
+  if(S.cumplida) ops.querySelector(`[data-v="${S.cumplida}"]`)?.classList.add("sel");
+  opcionesSel(ops, v => { S.cumplida = v; if(v === "si") lanzarConfeti({ n:90, dur:2400 }); });
+  nav({}, () => {
+    S.meta = $("#meta").value.trim(); S.falta = $("#falta").value.trim();
+    if(!S.meta){ $("#err").textContent = "Escribe tu meta, aunque sea corta 💜"; return; }
+    if(!S.cumplida){ $("#err").textContent = "Elige cómo vas con ella."; return; }
+    enviar(); siguiente(true);
+  });
+};
+
+/* t2 */
+VISTAS.t2 = () => `
+  <div class="trans"><div class="foto-hero">
+    <img class="foto" src="assets/foto-ventana.jpg" alt="Dos mujeres celebrando" style="object-position:62% 50%">
+    <img class="estrella e1" src="assets/forma-sol.png" alt=""><img class="estrella e2" src="assets/forma-estrella-morada.png" alt="">
+    <div class="pie"><h2>Tu meta ya tiene nombre</h2><p>Ahora una foto rápida de cómo estás hoy. Sin juicio, con cariño.</p></div>
+  </div>${btnsNav({ sinAtras:true, texto:"Mi mini balance 💰" })}</div>`;
+VISTAS_INIT.t2 = () => nav({}, () => siguiente(false));
+
+/* 3 — Mini balance (inputs) */
+function campoMonto(id, label, ph){
+  return `<label for="${id}">${label}</label><div class="monto-wrap"><span>$</span><input type="text" inputmode="numeric" id="${id}" placeholder="${ph||"0"}" value="${S.bal[id] ? num(S.bal[id]).toLocaleString("es-CO") : ""}"></div>`;
+}
+VISTAS.balance = () => `
+  <div class="card">
+    <div class="kicker">Paso 3</div>
+    <div class="ilus-cabecera"><div><h2>Mi mini balance</h2><p class="suave" style="margin:0">Aproximado está perfecto. Solo tú lo ves.</p></div><img src="assets/billetera.png" alt="" style="height:70px"></div>
+    <div class="grupo-titulo"><i style="background:var(--morado)"></i>Lo que tengo (en pesos)</div>
+    ${campoMonto("ahorro","Ahorros y efectivo disponible")}
+    ${campoMonto("inversion","Inversiones")}
+    ${campoMonto("otros","Otros bienes (casa, carro, negocio…)")}
+    <div class="grupo-titulo"><i style="background:var(--alerta)"></i>Lo que debo</div>
+    ${campoMonto("deudas","Deudas en total (tarjetas, créditos, préstamos)")}
+    <div class="grupo-titulo"><i style="background:var(--verde);border:1px solid #b8d97a"></i>Mi mes a mes</div>
+    ${campoMonto("ingreso","Lo que entra al mes")}
+    ${campoMonto("gasto","Lo que gasto al mes")}
+    <div class="microcopy" style="margin-top:18px">Si algún campo no aplica, déjalo en blanco. Nadie más ve tus montos: en la llamada solo se comparten los resultados.</div>
+    <div class="error" id="err"></div>
+    ${btnsNav({ texto:"Ver mi foto de hoy ✨" })}
+  </div>`;
+VISTAS_INIT.balance = () => {
+  Object.keys(S.bal).forEach(k => {
+    const el = document.getElementById(k); if(!el) return;
+    el.addEventListener("input", () => { const n = num(el.value); el.value = n ? n.toLocaleString("es-CO") : ""; S.bal[k] = String(n); });
+  });
+  nav({}, () => {
+    const b = S.bal;
+    if(!num(b.ahorro) && !num(b.inversion) && !num(b.otros) && !num(b.deudas) && !num(b.ingreso) && !num(b.gasto)){
+      $("#err").textContent = "Llena al menos un campo para armar tu panel."; return;
+    }
+    enviar(); siguiente(true);
+  });
+};
+
+/* 4 — Panel bonito */
+function calcular(){
+  const b = S.bal, ah = num(b.ahorro), inv = num(b.inversion), ot = num(b.otros), de = num(b.deudas), ing = num(b.ingreso), ga = num(b.gasto);
+  const activos = ah + inv + ot;
+  return { ah, inv, ot, de, ing, ga, activos, patrimonio: activos - de,
+    colchon: ga > 0 ? ah / ga : null,
+    tasa: ing > 0 ? (ing - ga) / ing : null,
+    deudaPct: activos > 0 ? de / activos : (de > 0 ? 1 : 0) };
+}
+function fraseHero(c){
+  if(c.patrimonio < 0) return "Hoy debes más de lo que tienes, y está bien saberlo: ver el número es el primer paso para moverlo.";
+  if(c.patrimonio === 0) return "Estás en el punto de partida. Desde aquí todo suma.";
+  return "Esto es lo que has construido. Cada peso que ves aquí tiene tu esfuerzo.";
+}
+function msgColchon(m){
+  if(m === null) return "Cuéntame lo que gastas al mes y te calculo cuántos meses de tranquilidad tienes.";
+  if(m < 1) return "Tu primer gran paso: llegar a 1 mes de colchón. Se construye de a poquito, y lo vamos a lograr.";
+  if(m < 3) return "Ya tienes una base. La meta cariñosa ahora: llegar a 3 meses.";
+  if(m < 6) return "¡Muy bien! Estás muy cerca de los 6 meses, el colchón que da tranquilidad real.";
+  return "¡Tienes un colchón sólido! Ahora tu dinero puede empezar a trabajar para ti.";
+}
+function msgTasa(t){
+  if(t === null) return "Cuéntame lo que entra al mes para ver cuánto te queda.";
+  if(t < 0) return "Este mes sale más de lo que entra. Es información, no culpa: es justo lo que vamos a ajustar.";
+  if(t < .1) return "Estás ahorrando un poquito. Subir ese porcentaje, aunque sea 2 puntos, cambia el año que viene.";
+  if(t < .2) return "Vas bien: una parte de lo que entra ya se queda contigo.";
+  return "¡Qué bien! Estás ahorrando 20% o más. Eso es disciplina que se nota.";
+}
+function msgDeuda(d, c){
+  if(c.de === 0) return "Sin deudas: ¡qué libertad! Tu dinero es todo tuyo.";
+  if(d < .3) return "Tus deudas son manejables frente a lo que tienes. Con un plan, se van rápido.";
+  if(d < .6) return "Hay deuda, pero también hay base. Ordenarla por tasa de interés es el mejor primer paso.";
+  return "Las deudas pesan bastante frente a lo que tienes. Un plan de salida paso a paso lo cambia todo.";
+}
+VISTAS.panel = () => {
+  const c = calcular();
+  const tot = c.activos || 1;
+  const pct = x => Math.max(0, Math.min(100, x));
+  const colPct = c.colchon === null ? 0 : pct(c.colchon / 6 * 100);
+  const tasaPct = c.tasa === null ? 0 : pct(c.tasa / .2 * 100);
+  const dPct = pct(c.deudaPct * 100);
+  return `
+  <div class="card">
+    <div class="kicker">Tu foto de hoy</div>
+    <h2>Así estás hoy, ${esc(primerNombre())}</h2>
+    <div class="hero-balance">
+      <img class="deco" src="assets/forma-estrella.png" alt="" style="top:10px;left:12px"><img class="deco" src="assets/forma-sol.png" alt="" style="bottom:8px;right:12px;width:44px">
+      <div class="rotulo">Mi patrimonio hoy</div>
+      <div class="monto">${c.patrimonio < 0 ? "-" : ""}${cop(Math.abs(c.patrimonio))}</div>
+      <p class="frase">${fraseHero(c)}</p>
+    </div>
+    ${c.activos > 0 ? `
+      <div class="stack">
+        <div style="width:${c.ah/tot*100}%;background:var(--morado)"></div>
+        <div style="width:${c.inv/tot*100}%;background:var(--lavanda)"></div>
+        <div style="width:${c.ot/tot*100}%;background:var(--periwinkle)"></div>
+      </div>
+      <div class="leyenda">
+        <span><i style="background:var(--morado)"></i>Ahorros ${cop(c.ah)}</span>
+        <span><i style="background:var(--lavanda)"></i>Inversiones ${cop(c.inv)}</span>
+        <span><i style="background:var(--periwinkle)"></i>Otros ${cop(c.ot)}</span>
+        ${c.de ? `<span><i style="background:var(--alerta)"></i>Deudas −${cop(c.de)}</span>` : ""}
+      </div>` : ""}
+
+    <div class="medidor"><div class="fila"><span class="nombre">🛟 Mi colchón</span><span class="valor">${c.colchon === null ? "—" : c.colchon.toFixed(1).replace(".0","") + " meses"}</span></div>
+      <div class="barra"><b data-w="${colPct}"></b></div><p class="msg">${msgColchon(c.colchon)}</p></div>
+    <div class="medidor"><div class="fila"><span class="nombre">🌱 Lo que me queda cada mes</span><span class="valor">${c.tasa === null ? "—" : Math.round(c.tasa*100) + "%"}</span></div>
+      <div class="barra"><b class="verde" data-w="${tasaPct}"></b></div><p class="msg">${msgTasa(c.tasa)}</p></div>
+    <div class="medidor"><div class="fila"><span class="nombre">🧾 Mis deudas frente a lo que tengo</span><span class="valor">${c.de === 0 ? "0%" : (c.deudaPct > 1 ? "100%+" : Math.round(c.deudaPct*100) + "%")}</span></div>
+      <div class="barra"><b class="rosa" data-w="${dPct}"></b></div><p class="msg">${msgDeuda(c.deudaPct, c)}</p></div>
+
+    <div class="meta-recuerdo">Tu meta era: <b>“${esc(S.meta)}”</b>. Esta foto es tu punto de partida real para llegar a ella.</div>
+    ${btnsNav({ texto:"Seguir ✨" })}
+  </div>`;
+};
+VISTAS_INIT.panel = () => {
+  setTimeout(() => document.querySelectorAll(".barra b").forEach(b => b.style.width = b.dataset.w + "%"), 150);
+  nav({}, () => siguiente(true));
+};
+
+/* t3 */
+VISTAS.t3 = () => `
+  <div class="trans"><div class="foto-hero">
+    <img class="foto" src="assets/foto-sonrisas.jpg" alt="Dos mujeres sonriendo" style="object-position:50% 20%">
+    <img class="estrella e1" src="assets/forma-destello.png" alt=""><img class="estrella e2" src="assets/forma-estrella.png" alt="">
+    <div class="pie"><h2>Un momento para ti</h2><p>Respira. Lo que sigue es mirar el año con honestidad y cariño.</p></div>
+  </div>${btnsNav({ sinAtras:true, texto:"Mi reflexión 🌿" })}</div>`;
+VISTAS_INIT.t3 = () => nav({}, () => siguiente(false));
+
+/* 5 — Reflexión */
+VISTAS.reflexion = () => `
+  <div class="card">
+    <div class="kicker">Paso 4</div>
+    <div class="ilus-cabecera"><h2>Mirando el año</h2><img src="assets/regadera.png" alt="" style="height:64px"></div>
+    <label for="faltoAno">Lo que me faltó este año fue…</label>
+    <textarea id="faltoAno" placeholder="Tiempo, constancia, claridad, apoyo… lo que sientas">${esc(S.faltoAno)}</textarea>
+    <label for="mejorar">Lo que siento que puedo mejorar es…</label>
+    <textarea id="mejorar" placeholder="Un hábito, una decisión, una conversación pendiente…">${esc(S.mejorar)}</textarea>
+    <label for="palabra">Mi palabra para 2027</label>
+    <input type="text" id="palabra" maxlength="24" placeholder="Una sola palabra" value="${esc(S.palabra)}">
+    <div class="error" id="err"></div>
+    ${btnsNav({ texto:"Ver mi cierre 🎉" })}
+  </div>`;
+VISTAS_INIT.reflexion = () => nav({}, () => {
+  S.faltoAno = $("#faltoAno").value.trim(); S.mejorar = $("#mejorar").value.trim(); S.palabra = $("#palabra").value.trim().split(/\s+/)[0] || "";
+  if(!S.faltoAno && !S.mejorar){ $("#err").textContent = "Cuéntame al menos una de las dos 💜"; return; }
+  enviar(); siguiente(true);
+});
+
+/* 6 — Cierre */
+const ESTADOS = { si:["si","🎉 ¡La cumpliste!"], camino:["cam","🌱 Vas en camino"], no:["no","⏳ Todavía no"], cambio:["cam","🔄 Cambió y quieres otra cosa"] };
+VISTAS.cierre = () => {
+  const e = ESTADOS[S.cumplida] || ["cam",""];
+  return `
+  <div class="foto-hero alto">
+    <img class="foto" src="assets/foto-ventana.jpg" alt="Dos mujeres celebrando" style="object-position:50% 40%">
+    <img class="estrella e1" src="assets/forma-estrella.png" alt=""><img class="estrella e2" src="assets/forma-sol.png" alt="">
+    <div class="pie"><h2>Tu cierre de año, ${esc(primerNombre())}</h2><p>Mira todo lo que cabe en un año.</p></div>
+  </div>
+  <div class="card">
+    <div class="resumen"><h3>🎯 Tu meta</h3><div class="chip ${e[0]}">${e[1]}</div><p style="margin:0"><q>${esc(S.meta)}</q></p></div>
+    ${S.falta ? `<div class="resumen"><h3>🧩 Lo que te falta para llegar</h3><p style="margin:0">${esc(S.falta)}</p></div>` : ""}
+    ${S.mejorar ? `<div class="resumen"><h3>🌿 Lo que quieres mejorar</h3><p style="margin:0">${esc(S.mejorar)}</p></div>` : ""}
+    ${S.palabra ? `<div class="resumen" style="text-align:center"><h3 style="justify-content:center">✨ Tu palabra para 2027</h3><div class="palabra-2027">${esc(S.palabra)}</div></div>` : ""}
+    <div class="cta">
+      <img src="assets/ilus-cofre.png" alt="">
+      <h3>Llegar es más fácil acompañada</h3>
+      <p style="margin:0 0 4px">Lo que te falta para tu meta tiene camino, y Feminario es ese camino: aprendes, practicas y avanzas paso a paso con otras mujeres.</p>
+      <a class="btn" href="${esc(CFG.LINK_CATALOGO)}" target="_blank" rel="noopener">Dar mi siguiente paso con Feminario →</a>
+    </div>
+    <p class="suave" style="text-align:center;margin:16px 0 0">Gracias por compartir, ${esc(primerNombre())}. Nos vemos el ${esc(CFG.FECHA_LABEL)} 💜</p>
+  </div>`;
+};
+VISTAS_INIT.cierre = () => { setTimeout(() => lanzarConfeti({ n:220, dur:4200 }), 700); };
+
+ir("bienvenida");
+</script>
+</body>
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cierre de Año · Panel Feminario</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../assets/forma-estrella-morada.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=MuseoModerno:wght@500;700;800&family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/marca.css">
+<style>
+  #app{ max-width:1180px; margin:0 auto; padding:22px 22px 60px; }
+  header{ display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; margin-bottom:18px; }
+  header img.logo{ height:44px; }
+  .titulo{ font-family:'MuseoModerno',sans-serif; font-weight:800; font-size:22px; color:var(--morado-oscuro); }
+  .controles{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .pill{ background:rgba(255,255,255,.8); border:1.5px solid rgba(126,132,174,.25); border-radius:999px; padding:8px 16px; font-weight:800; font-size:13.5px; color:var(--morado-oscuro); }
+  .pill b{ font-family:'MuseoModerno',sans-serif; font-size:18px; margin-right:4px; }
+  .aviso{ background:rgba(247,193,117,.35); border-radius:14px; padding:10px 16px; font-size:13px; margin-bottom:14px; color:var(--morado-oscuro); }
+
+  .tabs{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px; }
+  .tab{ border:none; cursor:pointer; font:inherit; font-weight:800; font-size:15px; padding:12px 22px; border-radius:999px; background:rgba(255,255,255,.7); color:var(--morado-oscuro); border:1.5px solid rgba(126,132,174,.25); transition:all .15s; }
+  .tab.sel{ background:linear-gradient(135deg,var(--morado),#8f8bc4); color:#fff; border-color:transparent; box-shadow:0 8px 20px rgba(126,132,174,.4); }
+  .seg{ display:inline-flex; background:rgba(126,132,174,.12); border-radius:999px; padding:4px; margin-bottom:14px; }
+  .seg button{ border:none; background:none; font:inherit; font-weight:700; font-size:13.5px; padding:8px 18px; border-radius:999px; cursor:pointer; color:var(--morado-oscuro); }
+  .seg button.sel{ background:#fff; box-shadow:0 2px 8px rgba(76,79,104,.18); }
+
+  .grid2{ display:grid; grid-template-columns:1.5fr 1fr; gap:18px; }
+  @media(max-width:860px){ .grid2{ grid-template-columns:1fr; } }
+  .seccion-titulo{ font-family:'MuseoModerno',sans-serif; font-size:19px; font-weight:800; color:var(--morado-oscuro); margin:0 0 4px; }
+  .seccion-sub{ font-size:13px; color:var(--morado-suave); margin:0 0 14px; }
+
+  .nube{ display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:6px 18px; padding:10px 4px; min-height:200px; }
+  .palabra{ border:none; background:none; font-family:'MuseoModerno',sans-serif; font-weight:800; cursor:pointer; line-height:1.05; padding:2px 4px; border-radius:12px; transition:transform .15s, background .15s; }
+  .palabra:hover{ transform:scale(1.08); background:rgba(194,203,255,.35); }
+  .palabra.sel{ background:var(--verde); }
+  .palabra sup{ font-family:'Montserrat',sans-serif; font-size:.38em; font-weight:700; opacity:.7; margin-left:2px; }
+
+  .rank{ display:grid; gap:9px; }
+  .rank-fila{ display:grid; grid-template-columns:110px 1fr 28px; align-items:center; gap:10px; font-size:14px; font-weight:700; color:var(--morado-oscuro); cursor:pointer; }
+  .rank-fila .nom{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .rank-fila .b{ height:16px; border-radius:9px; background:rgba(126,132,174,.13); overflow:hidden; }
+  .rank-fila .b i{ display:block; height:100%; border-radius:9px; background:linear-gradient(90deg,var(--periwinkle),var(--morado)); transition:width .8s; }
+  .rank-fila.sel .nom{ color:var(--morado); text-decoration:underline; }
+
+  .comentarios{ display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:12px; margin-top:6px; }
+  .com{ background:rgba(255,255,255,.78); border-radius:18px; padding:14px 16px; border:1px solid rgba(126,132,174,.15); font-size:14.5px; }
+  .com .quien{ font-size:12px; font-weight:800; color:var(--lavanda); filter:saturate(1.5) brightness(.8); margin-bottom:4px; }
+  .com mark{ background:var(--verde); border-radius:5px; padding:0 3px; }
+  .com.nuevo{ animation:pop .8s ease; }
+  @keyframes pop{ 0%{ transform:scale(.92); box-shadow:0 0 0 0 rgba(206,162,221,.9); } 100%{ transform:none; box-shadow:0 0 0 18px rgba(206,162,221,0); } }
+
+  .kpis{ display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:12px; margin-bottom:18px; }
+  .kpi{ background:linear-gradient(135deg,rgba(194,203,255,.6),rgba(206,162,221,.42)); border-radius:22px; padding:18px; text-align:center; }
+  .kpi .n{ font-family:'MuseoModerno',sans-serif; font-weight:800; font-size:42px; color:var(--morado-oscuro); line-height:1; }
+  .kpi .l{ font-size:13px; font-weight:700; color:var(--morado-oscuro); margin-top:6px; }
+  .kpi.verde{ background:linear-gradient(135deg,rgba(223,243,175,.8),rgba(194,203,255,.4)); }
+  .chip{ display:inline-block; font-size:12px; font-weight:800; padding:4px 11px; border-radius:999px; background:rgba(194,203,255,.5); color:var(--morado-oscuro); margin-bottom:8px; }
+  .chip.si{ background:var(--verde); } .chip.no{ background:var(--rosa-claro); }
+
+  .persona{ background:rgba(255,255,255,.78); border-radius:20px; padding:16px 18px; border:1px solid rgba(126,132,174,.15); }
+  .persona h4{ margin:0 0 8px; font-family:'MuseoModerno',sans-serif; font-size:18px; color:var(--morado-oscuro); }
+  .persona q{ font-style:italic; display:block; margin-bottom:8px; quotes:"“" "”"; }
+  .persona .falta{ font-size:13.5px; background:rgba(223,243,175,.45); border-radius:12px; padding:8px 12px; }
+  .pills{ display:flex; gap:6px; flex-wrap:wrap; }
+  .mini{ font-size:12px; font-weight:800; padding:5px 11px; border-radius:999px; background:rgba(194,203,255,.45); color:var(--morado-oscuro); }
+  .mini.ok{ background:var(--verde); } .mini.ojo{ background:var(--rosa-claro); }
+  .vacio{ text-align:center; padding:40px 10px; color:var(--morado-suave); }
+  .vacio img{ height:110px; margin-bottom:8px; }
+  .presentacion .controles .oculto-pres, .presentacion .aviso{ display:none; }
+  .presentacion .comentarios .com{ font-size:17px; }
+  .presentacion .nube{ min-height:280px; }
+  .overlay{ position:fixed; inset:0; background:rgba(248,247,242,.92); z-index:150; display:flex; align-items:center; justify-content:center; padding:20px; }
+  .overlay .card{ max-width:380px; width:100%; text-align:center; }
+</style>
+</head>
+<body>
+<div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div><div class="blob blob-4"></div>
+
+<div id="app">
+  <header>
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap"><img class="logo" src="../assets/logo-feminario.png" alt="Feminario"><div class="titulo">Cierre de año · <span id="fecha"></span></div></div>
+    <div class="controles">
+      <div class="pill"><b id="npart">0</b>participantes</div>
+      <button class="btn chico secundario oculto-pres" id="btn-act" type="button">↻ Actualizar</button>
+      <button class="btn chico secundario oculto-pres" id="btn-demo" type="button">✨ Datos de ejemplo</button>
+      <button class="btn chico" id="btn-pres" type="button">🖥 Modo presentación</button>
+    </div>
+  </header>
+  <div class="aviso" id="aviso"></div>
+  <nav class="tabs" id="tabs"></nav>
+  <main id="vista"></main>
+</div>
+
+<script src="../assets/config.js"></script>
+<script src="../assets/confeti.js"></script>
+<script>
+const CFG = window.CIERRE;
+const $ = (s, r=document) => r.querySelector(s);
+function esc(t){ return String(t==null?"":t).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+$("#fecha").textContent = CFG.FECHA_LABEL;
+
+/* ============================================================
+   DATOS — Sheet (si hay API_URL) o este navegador
+   ============================================================ */
+let filas = [], demo = false, vistos = new Set(), primeraCarga = true;
+const COLORES = ["#7E84AE","#CEA2DD","#F59356","#6e9a3a","#4C4F68","#B24A72"];
+
+async function cargar(){
+  if(demo) return DEMO;
+  if(CFG.API_URL){
+    const clave = sessionStorage.getItem("fem_clave") || "";
+    const r = await fetch(CFG.API_URL + "?accion=cierre&clave=" + encodeURIComponent(clave));
+    const j = await r.json();
+    if(!j.ok){ if(j.error === "clave"){ sessionStorage.removeItem("fem_clave"); pedirClave(true); } throw new Error(j.error); }
+    return j.filas;
+  }
+  try{ return Object.values(JSON.parse(localStorage.getItem(CFG.STORAGE_KEY) || "{}")); }catch(e){ return []; }
+}
+async function refrescar(silencioso){
+  try{
+    filas = (await cargar()).filter(f => f && f.nombre);
+    const nuevos = filas.filter(f => !vistos.has(f.id));
+    nuevos.forEach(f => vistos.add(f.id));
+    if(!primeraCarga && nuevos.length){ lanzarConfeti({ n:120, dur:2800 }); toast("💜 ¡Llegó la respuesta de " + primerNombre(nuevos[nuevos.length-1].nombre) + "!"); }
+    primeraCarga = false;
+    $("#npart").textContent = filas.length;
+    pintar(nuevos.map(f => f.id));
+  }catch(e){ if(!silencioso) toast("No pude cargar las respuestas"); }
+}
+function primerNombre(n){ return String(n||"").trim().split(/\s+/)[0]; }
+function toast(t){ const el = document.createElement("div"); el.style.cssText="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#4C4F68;color:#fff;padding:12px 22px;border-radius:999px;font-weight:700;font-size:14px;z-index:300;box-shadow:0 10px 30px rgba(0,0,0,.25)"; el.textContent=t; document.body.appendChild(el); setTimeout(()=>el.remove(), 3200); }
+
+function pedirClave(error){
+  const o = document.createElement("div"); o.className = "overlay";
+  o.innerHTML = `<div class="card"><img src="../assets/ilus-cofre.png" alt="" style="height:90px"><h2 style="font-size:22px">Panel de Feminario</h2><p class="suave">Escribe la clave para ver las respuestas.</p><input type="text" id="clave" placeholder="Clave" autocomplete="off" style="text-align:center"><div style="color:var(--alerta);font-size:13px;min-height:18px;margin-top:6px">${error ? "Esa clave no es correcta." : ""}</div><button class="btn" id="ok" type="button" style="margin-top:8px">Entrar</button></div>`;
+  document.body.appendChild(o);
+  const go = () => { sessionStorage.setItem("fem_clave", $("#clave", o).value.trim()); o.remove(); refrescar(); };
+  $("#ok", o).addEventListener("click", go); $("#clave", o).addEventListener("keydown", e => { if(e.key === "Enter") go(); }); $("#clave", o).focus();
+}
+
+/* ============================================================
+   ANÁLISIS DE PALABRAS — cuenta cada palabra una vez por persona
+   ============================================================ */
+const STOP = new Set(("a al algo algun alguna algunas alguno algunos ante antes aqui asi aun aunque bien cada casi como con contra cual cuando cuanto de del desde donde dos e el ella ellas ellos en entre era eran eres es esa esas ese eso esos esta estaba estado estamos estan estar estas este esto estos estoy fue fueron fui ha habia han hasta hay hace hacer he hoy la las le les lo los mas me mi mis mucho muchas muchos muy nada ni no nos nosotras nuestra nuestro o os otra otras otro otros para pero poco por porque que quien se sea ser si sido sin sobre solo son soy su sus tambien tan tanto te tengo tenia tiene tienen ti todo toda todas todos tu tus un una uno unas unos va vamos van ver vez voy y ya yo pude puedo puede poder hacer hecho cosas cosa algo mejor sentir siento sentia queria quiero quise tener tenido tener fue ser estar estoy esta senti ahora entonces ademas pues sino mismo misma gracias parte forma manera veces vez").split(/\s+/));
+function sinTildes(s){ return s.normalize("NFD").replace(/[̀-ͯ]/g, ""); }
+function clavePalabra(w){ w = sinTildes(w.toLowerCase()); if(w.length > 4 && w.endsWith("s")) w = w.slice(0,-1); return w; }
+function palabrasDe(texto){
+  const out = [];
+  (String(texto||"").toLowerCase().match(/[a-záéíóúüñ]+/g) || []).forEach(w => {
+    if(w.length < 3) return; if(STOP.has(sinTildes(w))) return; out.push(w);
+  });
+  return out;
+}
+function frecuencias(textos){          // textos: [{quien, texto}]
+  const mapa = new Map();
+  textos.forEach(t => {
+    const vistaEnPersona = new Set();
+    palabrasDe(t.texto).forEach(w => {
+      const k = clavePalabra(w); if(vistaEnPersona.has(k)) return; vistaEnPersona.add(k);
+      let e = mapa.get(k); if(!e){ e = { k, n:0, formas:new Map() }; mapa.set(k, e); }
+      e.n++; e.formas.set(w, (e.formas.get(w)||0) + 1);
+    });
+  });
+  return [...mapa.values()].map(e => ({ k:e.k, n:e.n, w:[...e.formas.entries()].sort((a,b)=>b[1]-a[1]||a[0].length-b[0].length)[0][0] }))
+    .sort((a,b) => b.n - a.n || a.w.localeCompare(b.w, "es"));
+}
+function resaltar(texto, k){
+  if(!k) return esc(texto);
+  return String(texto).replace(/[a-záéíóúüñ]+/gi, w => clavePalabra(w) === k ? `\u0001${w}\u0002` : w)
+    .replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])).replace(/\u0001/g,"<mark>").replace(/\u0002/g,"</mark>");
+}
+
+/* ============================================================
+   COMPONENTES
+   ============================================================ */
+let tab = "gusta", sub = { gusta:"gusta", metas:"falta", reflex:"faltoAno" }, filtro = null;
+
+function nubeHTML(freq, max, estatico){
+  const top = freq.slice(0, max || 40); if(!top.length) return "";
+  const mx = top[0].n, mn = top[top.length-1].n;
+  return `<div class="nube">${top.map((f,i) => {
+    const t = mx === mn ? .5 : (f.n - mn) / (mx - mn);
+    const size = Math.round(18 + t * 40);
+    return `<button class="palabra ${!estatico && filtro===f.k?"sel":""}" ${estatico?"":`data-k="${esc(f.k)}"`} style="font-size:${size}px;color:${COLORES[i % COLORES.length]}">${esc(f.w)}${f.n > 1 ? `<sup>${f.n}</sup>` : ""}</button>`;
+  }).join("")}</div>`;
+}
+function rankHTML(freq){
+  const top = freq.filter(f => f.n > 1).slice(0, 8); if(!top.length) return `<p class="suave">Aquí aparecen las palabras que se repiten en 2 o más respuestas.</p>`;
+  const mx = top[0].n;
+  return `<div class="rank">${top.map(f => `<div class="rank-fila ${filtro===f.k?"sel":""}" data-k="${esc(f.k)}"><span class="nom">${esc(f.w)}</span><div class="b"><i style="width:${f.n/mx*100}%"></i></div><span>${f.n}</span></div>`).join("")}</div>`;
+}
+function comentariosHTML(items, nuevos){
+  if(!items.length) return "";
+  return `<div class="comentarios">${items.map(i => `<div class="com ${nuevos.includes(i.id)?"nuevo":""}"><div class="quien">${esc(primerNombre(i.quien))}</div>${resaltar(i.texto, filtro)}</div>`).join("")}</div>`;
+}
+function vacio(t){ return `<div class="vacio"><img src="../assets/ilus-casa.png" alt=""><p>${t}</p></div>`; }
+function seg(grupo, opciones){
+  return `<div class="seg">${opciones.map(o => `<button data-seg="${grupo}" data-v="${o[0]}" class="${sub[grupo]===o[0]?"sel":""}">${o[1]}</button>`).join("")}</div>`;
+}
+function analisisHTML(campo, titulo, subt, nuevos){
+  const items = filas.filter(f => f[campo] && String(f[campo]).trim()).map(f => ({ id:f.id, quien:f.nombre, texto:f[campo] }));
+  if(!items.length) return vacio("Todavía no hay respuestas. Aquí van a aparecer en vivo ✨");
+  const freq = frecuencias(items);
+  const vis = filtro ? items.filter(i => palabrasDe(i.texto).some(w => clavePalabra(w) === filtro)) : items;
+  return `<div class="grid2"><div class="card"><h3 class="seccion-titulo">${titulo}</h3><p class="seccion-sub">${subt} · toca una palabra para ver quién la dijo</p>${nubeHTML(freq)}</div>
+    <div class="card"><h3 class="seccion-titulo">Lo que más se repite</h3><p class="seccion-sub">Personas que usaron cada palabra</p>${rankHTML(freq)}</div></div>
+    <div class="card"><h3 class="seccion-titulo">${filtro ? `Quiénes dijeron “${esc((freq.find(f=>f.k===filtro)||{}).w || filtro)}”` : "En sus palabras"}</h3>
+    ${filtro ? `<button class="btn chico secundario" id="quitar" type="button" style="margin:0 0 12px">✕ Ver todos los comentarios</button>` : `<p class="seccion-sub">${items.length} comentarios</p>`}${comentariosHTML(vis, nuevos)}</div>`;
+}
+
+/* ---- pestañas ---- */
+const TABS = [["gusta","💜 Lo que más nos gusta"],["metas","🎯 Metas"],["balance","💰 Balance"],["reflex","🌿 Reflexión"]];
+
+function vistaGusta(nuevos){
+  return seg("gusta", [["gusta","Lo que nos gusta de Feminario"],["ayuda","Cómo nos ha ayudado"]])
+    + analisisHTML(sub.gusta, sub.gusta === "gusta" ? "Lo que más les gusta de Feminario" : "Cómo Feminario les ha ayudado", "Palabras más repetidas", nuevos);
+}
+function vistaMetas(nuevos){
+  if(!filas.length) return vacio("Todavía no hay respuestas. Aquí van a aparecer en vivo ✨");
+  const c = k => filas.filter(f => f.cumplida === k).length;
+  const kpis = `<div class="kpis">
+    <div class="kpi verde"><div class="n">${c("si")}</div><div class="l">🎉 Cumplieron su meta</div></div>
+    <div class="kpi"><div class="n">${c("camino")}</div><div class="l">🌱 Van en camino</div></div>
+    <div class="kpi"><div class="n">${c("no")}</div><div class="l">⏳ Todavía no</div></div>
+    <div class="kpi"><div class="n">${c("cambio")}</div><div class="l">🔄 Cambiaron de meta</div></div></div>`;
+  const ET = { si:["si","🎉 La cumplió"], camino:["","🌱 En camino"], no:["no","⏳ Todavía no"], cambio:["","🔄 Cambió de meta"] };
+  const personas = `<div class="comentarios">${filas.filter(f => f.meta).map(f => { const e = ET[f.cumplida] || ["",""];
+    return `<div class="persona ${nuevos.includes(f.id)?"com nuevo":""}"><h4>${esc(primerNombre(f.nombre))}</h4><span class="chip ${e[0]}">${e[1]}</span><q>${esc(f.meta)}</q>${f.falta ? `<div class="falta"><b>Le falta:</b> ${esc(f.falta)}</div>` : ""}</div>`; }).join("")}</div>`;
+  const items = filas.filter(f => f.falta).map(f => ({ id:f.id, quien:f.nombre, texto:f.falta }));
+  const freq = frecuencias(items);
+  return kpis + `<div class="card"><h3 class="seccion-titulo">Lo que les falta para llegar</h3><p class="seccion-sub">Las palabras que más se repiten — ahí está lo que Feminario puede cubrir</p>${nubeHTML(freq, 24, true) || `<p class="suave">Aún sin respuestas.</p>`}</div>`
+    + `<div class="card"><h3 class="seccion-titulo">Sus metas, en sus palabras</h3>${personas}</div>`;
+}
+function metricas(f){
+  const ah = +f.ahorro||0, inv = +f.inversion||0, ot = +f.otros||0, de = +f.deudas||0, ing = +f.ingreso||0, ga = +f.gasto||0, act = ah+inv+ot;
+  return { colchon: ga>0 ? ah/ga : null, tasa: ing>0 ? (ing-ga)/ing : null, deuda: act>0 ? de/act : (de>0?1:0), tieneDeuda: de>0, hay: !!(ah||inv||ot||de||ing||ga), conInv: inv>0 };
+}
+function mediana(a){ a = a.filter(x => x !== null).sort((x,y)=>x-y); if(!a.length) return null; const m = a.length>>1; return a.length%2 ? a[m] : (a[m-1]+a[m])/2; }
+function vistaBalance(nuevos){
+  const con = filas.filter(f => metricas(f).hay);
+  if(!con.length) return vacio("Todavía nadie ha llenado su mini balance ✨");
+  const M = con.map(f => ({ f, m:metricas(f) }));
+  const medCol = mediana(M.map(x => x.m.colchon)), medTasa = mediana(M.map(x => x.m.tasa));
+  const colOk = M.filter(x => x.m.colchon !== null && x.m.colchon >= 3).length;
+  const conDeuda = M.filter(x => x.m.tieneDeuda).length, conInv = M.filter(x => x.m.conInv).length;
+  const kpis = `<div class="kpis">
+    <div class="kpi"><div class="n">${medCol === null ? "—" : medCol.toFixed(1).replace(".0","")}</div><div class="l">🛟 Meses de colchón (mediana)</div></div>
+    <div class="kpi verde"><div class="n">${colOk}/${M.length}</div><div class="l">Ya tienen 3+ meses de colchón</div></div>
+    <div class="kpi"><div class="n">${medTasa === null ? "—" : Math.round(medTasa*100) + "%"}</div><div class="l">🌱 Ahorro mensual (mediana)</div></div>
+    <div class="kpi"><div class="n">${conDeuda}/${M.length}</div><div class="l">🧾 Tienen deudas</div></div>
+    <div class="kpi"><div class="n">${conInv}/${M.length}</div><div class="l">📈 Ya invierten</div></div></div>`;
+  const tiles = `<div class="comentarios">${M.map(({f,m}) => `<div class="persona ${nuevos.includes(f.id)?"com nuevo":""}"><h4>${esc(primerNombre(f.nombre))}</h4><div class="pills">
+    <span class="mini ${m.colchon!==null&&m.colchon>=3?"ok":(m.colchon!==null&&m.colchon<1?"ojo":"")}">🛟 ${m.colchon===null?"—":m.colchon.toFixed(1).replace(".0","")+" meses"}</span>
+    <span class="mini ${m.tasa!==null&&m.tasa>=.1?"ok":(m.tasa!==null&&m.tasa<0?"ojo":"")}">🌱 ${m.tasa===null?"—":Math.round(m.tasa*100)+"%"}</span>
+    <span class="mini ${!m.tieneDeuda?"ok":(m.deuda>=.6?"ojo":"")}">🧾 ${!m.tieneDeuda?"Sin deudas":(m.deuda>1?"100%+":Math.round(m.deuda*100)+"%")+" deuda"}</span></div></div>`).join("")}</div>`;
+  return kpis + `<div class="card"><h3 class="seccion-titulo">Cada una, de un vistazo</h3><p class="seccion-sub">Solo resultados — los montos nunca se muestran en pantalla</p>${tiles}</div>`;
+}
+function vistaReflex(nuevos){
+  const pal = frecuencias(filas.filter(f => f.palabra).map(f => ({ quien:f.nombre, texto:f.palabra })));
+  const nubePal = pal.length ? `<div class="card" style="text-align:center"><h3 class="seccion-titulo">Nuestras palabras para 2027</h3>${nubeHTML(pal, 30, true)}</div>` : "";
+  return seg("reflex", [["faltoAno","Lo que nos faltó"],["mejorar","Lo que queremos mejorar"]])
+    + analisisHTML(sub.reflex, sub.reflex === "faltoAno" ? "Lo que nos faltó este año" : "Lo que queremos mejorar", "Palabras más repetidas", nuevos) + nubePal;
+}
+const VISTAS = { gusta:vistaGusta, metas:vistaMetas, balance:vistaBalance, reflex:vistaReflex };
+
+function pintar(nuevos){
+  nuevos = nuevos || [];
+  $("#tabs").innerHTML = TABS.map(t => `<button class="tab ${tab===t[0]?"sel":""}" data-tab="${t[0]}">${t[1]}</button>`).join("");
+  $("#vista").innerHTML = VISTAS[tab](nuevos);
+  $("#aviso").style.display = (!CFG.API_URL || demo) ? "block" : "none";
+  $("#aviso").textContent = demo ? "Estás viendo DATOS DE EJEMPLO (no son clientas reales). Pulsa “Datos de ejemplo” otra vez para volver a las reales."
+    : "Modo local: sin Google Sheet conectado solo ves las respuestas hechas en este mismo navegador. Mira el README para conectar el Sheet.";
+}
+
+/* ---- eventos (delegados) ---- */
+document.addEventListener("click", e => {
+  const t = e.target.closest("[data-tab]"); if(t){ tab = t.dataset.tab; filtro = null; pintar(); return; }
+  const s = e.target.closest("[data-seg]"); if(s){ sub[s.dataset.seg] = s.dataset.v; filtro = null; pintar(); return; }
+  const p = e.target.closest("[data-k]"); if(p){ filtro = filtro === p.dataset.k ? null : p.dataset.k; pintar(); return; }
+  if(e.target.closest("#quitar")){ filtro = null; pintar(); }
+});
+$("#btn-act").addEventListener("click", () => refrescar());
+$("#btn-pres").addEventListener("click", () => {
+  const on = document.body.classList.toggle("presentacion");
+  $("#btn-pres").textContent = on ? "↩ Salir de presentación" : "🖥 Modo presentación";
+  if(on && document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(()=>{});
+  else if(!on && document.fullscreenElement) document.exitFullscreen();
+});
+$("#btn-demo").addEventListener("click", () => { demo = !demo; $("#btn-demo").textContent = demo ? "↩ Datos reales" : "✨ Datos de ejemplo"; vistos = new Set(); primeraCarga = true; filtro = null; refrescar(); });
+
+/* ---- datos de ejemplo (ficticios) ---- */
+const DEMO = [
+ { id:"d1", nombre:"Camila", gusta:"Me encanta que las explicaciones son claras y con cariño, nunca me siento juzgada.", ayuda:"Por fin armé mi fondo de emergencia y entendí mis gastos.", meta:"Ahorrar tres meses de gastos para mi fondo de emergencia", cumplida:"camino", falta:"Constancia y un plan automático para ahorrar", ahorro:9000000, inversion:1200000, otros:0, deudas:0, ingreso:4200000, gasto:2800000, faltoAno:"Me faltó constancia con el ahorro", mejorar:"Automatizar mis ahorros cada mes", palabra:"Constancia" },
+ { id:"d2", nombre:"Valentina", gusta:"La comunidad de mujeres y el cariño con el que explican, todo es claro.", ayuda:"Aprendí a invertir sin miedo y a ordenar mis deudas.", meta:"Empezar a invertir en un fondo", cumplida:"si", falta:"Aprender a diversificar mejor", ahorro:6000000, inversion:6500000, otros:0, deudas:1800000, ingreso:5000000, gasto:3600000, faltoAno:"Tiempo para estudiar más", mejorar:"Diversificar mis inversiones", palabra:"Crecer" },
+ { id:"d3", nombre:"Mariana", gusta:"Me siento acompañada, las clases son claras y prácticas.", ayuda:"Dejé de evitar mis cuentas y hoy sé cuánto gasto.", meta:"Salir de mis deudas de tarjeta", cumplida:"camino", falta:"Un plan claro para pagar primero la más cara", ahorro:600000, inversion:0, otros:0, deudas:9000000, ingreso:3300000, gasto:3100000, faltoAno:"Claridad sobre qué deuda pagar primero", mejorar:"Dejar de gastar en impulso", palabra:"Libertad" },
+ { id:"d4", nombre:"Daniela", gusta:"La comunidad, la claridad y que todo se explica sin tecnicismos.", ayuda:"Hoy tengo mi presupuesto y lo cumplo casi siempre.", meta:"Comprar mi apartamento", cumplida:"no", falta:"Más ingresos y un plan para la cuota inicial", ahorro:14000000, inversion:3000000, otros:0, deudas:0, ingreso:6500000, gasto:3800000, faltoAno:"Me faltó aumentar mis ingresos", mejorar:"Buscar una segunda fuente de ingresos", palabra:"Hogar" },
+ { id:"d5", nombre:"Laura", gusta:"Que es un espacio seguro para preguntar lo que sea sobre plata.", ayuda:"Perdí el miedo a hablar de dinero con mi pareja.", meta:"Hablar de plata sin miedo y armar un presupuesto", cumplida:"si", falta:"Un plan de inversión a largo plazo", ahorro:2200000, inversion:0, otros:0, deudas:0, ingreso:3800000, gasto:3000000, faltoAno:"Constancia en revisar mis gastos", mejorar:"Revisar mi presupuesto cada semana", palabra:"Calma" },
+ { id:"d6", nombre:"Sofía", gusta:"El cariño, la comunidad y que las explicaciones son claras.", ayuda:"Armé mi primer portafolio.", meta:"Armar mi primer portafolio de inversión", cumplida:"si", falta:"Seguir aprendiendo y aportar cada mes", ahorro:14000000, inversion:9000000, otros:15000000, deudas:2500000, ingreso:7000000, gasto:4500000, faltoAno:"Me faltó tiempo", mejorar:"Aportar cada mes sin falta", palabra:"Constancia" },
+ { id:"d7", nombre:"Paula", gusta:"Cómo explican con ejemplos reales y con mucho cariño.", ayuda:"Entendí la diferencia entre ahorrar e invertir.", meta:"Ahorrar para viajar", cumplida:"cambio", falta:"Claridad sobre mi nueva meta", ahorro:1500000, inversion:0, otros:0, deudas:500000, ingreso:3000000, gasto:2700000, faltoAno:"Claridad sobre qué quería de verdad", mejorar:"Definir mejor mis metas", palabra:"Claridad" },
+ { id:"d8", nombre:"Ana María", gusta:"La comunidad y la sensación de que no estoy sola en esto.", ayuda:"Creé mi hábito de ahorro mensual.", meta:"Ahorrar el 10% de mi sueldo cada mes", cumplida:"camino", falta:"Constancia", ahorro:2800000, inversion:500000, otros:0, deudas:0, ingreso:4000000, gasto:3500000, faltoAno:"Constancia", mejorar:"Ahorrar apenas me paguen", palabra:"Constancia" }
+];
+
+/* ---- arranque ---- */
+if(CFG.API_URL && !sessionStorage.getItem("fem_clave")) pedirClave(false); else refrescar();
+setInterval(() => refrescar(true), 10000);
+</script>
+</body>
+</html>
