@@ -8,5 +8,5 @@ window.CIERRE = {
   COMUNIDAD_API: "https://femi-panel.vercel.app/api/comunidad",
   STORAGE_KEY: "fem_cierre_dic_v1",
   LINK_CATALOGO: "https://www.feminario.co/catalogo",
-  FECHA_LABEL: "20 de diciembre"
+  FECHA_LABEL: "1 de diciembre"
 };

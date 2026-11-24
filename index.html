@@ -97,6 +97,10 @@
   .chip.cumpli{ background:var(--verde); } .chip.no{ background:var(--rosa-claro); }
   .cta{ background:linear-gradient(135deg,rgba(206,162,221,.6),rgba(194,203,255,.55)); border-radius:24px; padding:24px 22px; margin:18px 0 0; text-align:center; }
   .cta h3{ font-size:21px; color:var(--morado-oscuro); }
+  .cta img.fundadoras{ display:block; width:100%; height:auto; border-radius:18px; margin:0 0 14px; }
+  .meta-quote{ text-align:center; font-family:'MuseoModerno',sans-serif; font-size:20px; line-height:1.35; color:var(--morado-oscuro); margin:8px 4px 14px; }
+  .centro{ text-align:center; }
+  @media print{ body *{ visibility:hidden } #pdf-doc, #pdf-doc *{ visibility:visible } #pdf-doc{ position:absolute!important; left:0!important; top:0!important; width:100%!important } }
   .toast{ position:fixed; left:50%; bottom:22px; transform:translateX(-50%); background:var(--morado-oscuro); color:#fff; padding:11px 20px; border-radius:999px; font-size:13.5px; font-weight:600; z-index:300; box-shadow:0 10px 30px rgba(0,0,0,.25); }
 </style>
 </head>
@@ -110,6 +114,7 @@
 
 <script src="assets/config.js"></script>
 <script src="assets/confeti.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
 /* ============================================================
    CIERRE DE AÑO — 4 pasos. Lo que ella escribe se guarda en el navegador y se envía
@@ -463,26 +468,68 @@ VISTAS_INIT.quiero = () => {
 };
 
 /* 6 — Cierre */
-VISTAS.cierre = () => {
-  const ok = S.metas.filter(m => m.estado === "cumpli").length, c = calcular();
-  return `
+const fmtMetaEstado = e => (ESTADOS.find(x => x[0] === e) || ["",""])[1];
+/* Documento que se descarga como PDF: lo importante de lo que escribió */
+function docPDF(){
+  const c = calcular(), I = S.items, m = v => cop(num(v));
+  const lista = (titulo, xs, f) => xs.filter(x => num(x.v) || x.n).length ? `<h3>${titulo}</h3>${xs.filter(x => num(x.v) || x.n).map(f).join("")}` : "";
+  const fila = (n, v, extra) => `<div class="f"><span>${esc(n)}${extra ? ` <i>${esc(extra)}</i>` : ""}</span><b>${v}</b></div>`;
+  return `<div style="font-family:Montserrat,Arial,sans-serif;color:#3A3550;padding:6px 4px;line-height:1.5">
+    <style>#pdf-doc h1{font-family:MuseoModerno,Montserrat,sans-serif;font-size:26px;margin:6px 0 0;color:#4C4F68}#pdf-doc h2{font-family:MuseoModerno,Montserrat,sans-serif;font-size:18px;color:#fff;background:#7E84AE;border-radius:12px;padding:6px 14px;margin:22px 0 10px;display:inline-block}
+    #pdf-doc h3{font-size:13px;color:#7E84AE;margin:12px 0 4px;text-transform:uppercase;letter-spacing:.6px}#pdf-doc .f{display:flex;justify-content:space-between;gap:12px;padding:5px 0;border-bottom:1px dashed #d6d8e6;font-size:13px}#pdf-doc .f i{color:#8A90B8;font-style:normal;font-size:11.5px}
+    #pdf-doc .meta{padding:6px 0;font-size:13.5px}#pdf-doc .chip{display:inline-block;font-size:11px;font-weight:800;padding:3px 10px;border-radius:999px;background:#C2CBFF;margin-right:6px}#pdf-doc .chip.cumpli{background:#DFF3AF}#pdf-doc .chip.no{background:#F9E1FF}
+    #pdf-doc p{margin:0 0 8px;font-size:13.5px;white-space:pre-wrap}#pdf-doc .tot{background:linear-gradient(135deg,#dfe3ff,#ecd3f4);border-radius:16px;padding:14px;text-align:center;margin:8px 0}#pdf-doc .tot b{font-size:26px;font-family:MuseoModerno,sans-serif;color:#4C4F68}</style>
+    <div style="text-align:center"><img src="assets/logo-feminario.png" style="height:38px" alt=""><br>
+      ${S.foto ? `<img src="${S.foto}" style="width:84px;height:84px;border-radius:50%;object-fit:cover;margin-top:12px;border:3px solid #C2CBFF" alt="">` : ""}
+      <h1>${esc(S.nombre)}</h1><div style="font-size:12.5px;color:#8A90B8">Mi cierre de año · ${esc(CFG.FECHA_LABEL)}</div></div>
+    <h2>Cómo te fue este año</h2>
+    ${S.metas.map(x => `<div class="meta"><span class="chip ${x.estado}">${fmtMetaEstado(x.estado)}</span> ${esc(x.texto)}</div>`).join("")}
+    <h2>Cómo estoy hoy</h2>
+    <div class="tot"><div style="font-size:11px;letter-spacing:1px;text-transform:uppercase">Mi patrimonio hoy</div><b>${c.patrimonio < 0 ? "-" : ""}${cop(Math.abs(c.patrimonio))}</b></div>
+    ${lista("Ahorros", I.ahorros, x => fila(x.n || "Ahorro", m(x.v)))}
+    ${lista("Inversiones", I.inversiones, x => fila(x.n || (x.tj !== "" && x.tj !== undefined ? TIPOS_INV[+x.tj]?.[1] : "") || "Inversión", m(x.v), x.n && x.tj !== "" && x.tj !== undefined ? TIPOS_INV[+x.tj]?.[1] : ""))}
+    ${lista("Bienes", I.bienes, x => fila(x.n || "Bien", m(x.v), x.est === "pagando" ? `lo estoy pagando, me faltan ${m(x.debo)}` : x.est === "mio" ? "ya es mío" : ""))}
+    ${lista("Deudas", I.deudas, x => fila(x.n || (x.tj !== "" && x.tj !== undefined ? TIPOS_DEUDA[+x.tj]?.[1] : "") || "Deuda", m(x.v)))}
+    ${lista("Lo que entra cada mes", I.ingresos, x => fila(x.n || "Ingreso", m(x.v)))}
+    ${lista("Lo que gasto cada mes", I.gastos, x => fila(x.n || "Gasto", m(x.v), x.t === "var" ? "variable" : "fijo"))}
+    ${lista("Lo que ahorro o invierto cada mes", I.aportes, x => fila(x.n || "Aporte", m(x.v)))}
+    <h2>Carta a mi yo del 2027</h2><p>${esc(S.carta)}</p>
+    <h2>Lo que me gustaría ver en Feminario</h2>
+    ${S.temas.length ? `<p><b>Temas:</b> ${esc(S.temas.join(", "))}</p>` : ""}${S.quiere ? `<p>${esc(S.quiere)}</p>` : ""}
+    <p style="text-align:center;color:#8A90B8;font-size:11px;margin-top:22px">Feminario · @feminario.co · Contenido educativo, no asesoría financiera personalizada.</p></div>`;
+}
+VISTAS.cierre = () => `
   <div class="card">
     ${S.foto ? `<img class="avatar" src="${S.foto}" alt="${esc(S.nombre)}">` : ""}
     <h1 class="titulo">Lo lograste, ${esc(primerNombre())}</h1>
-    <p class="bajada">Miraste tu año de frente. Eso ya es cuidarte.</p>
-    <div class="resumen"><h3>Tus metas</h3><p style="margin:0 0 8px">Cumpliste <b>${ok}</b> de <b>${S.metas.length}</b>.</p>
-      ${S.metas.map(m => `<div><span class="chip ${m.estado}">${(ESTADOS.find(x => x[0] === m.estado) || ["",""])[1]}</span> ${esc(m.texto)}</div>`).join("")}</div>
-    <div class="resumen"><h3>Tu foto de hoy</h3><p style="margin:0">Patrimonio de <b>${c.patrimonio < 0 ? "-" : ""}${cop(Math.abs(c.patrimonio))}</b>${c.inv ? `, con <b>${cop(c.inv)}</b> invertidos` : ""}.</p></div>
-    <div class="resumen"><h3>Tu carta a 2027</h3><p style="margin:0"><q>${esc(S.carta.length > 220 ? S.carta.slice(0, 220) + "…" : S.carta)}</q></p></div>
+    <p class="meta-quote">“${esc(S.carta.length > 240 ? S.carta.slice(0, 240).trim() + "…" : S.carta)}”</p>
+    <div class="resumen"><h3 class="centro">Cómo te fue este año</h3>
+      ${S.metas.map(m => `<div style="margin:6px 0"><span class="chip ${m.estado}">${fmtMetaEstado(m.estado)}</span> ${esc(m.texto)}</div>`).join("")}</div>
+    <div class="resumen"><h3 class="centro">Cómo estás hoy</h3><p style="margin:0;text-align:center">Patrimonio de <b>${calcular().patrimonio < 0 ? "-" : ""}${cop(Math.abs(calcular().patrimonio))}</b>${calcular().inv ? `, con <b>${cop(calcular().inv)}</b> invertidos` : ""}.</p></div>
+    <button class="btn secundario" id="pdf-go" type="button">Descargar mi PDF</button>
+    <div class="error" id="pdf-av" style="text-align:center"></div>
     <div class="cta">
-      <h3>Llegar es más fácil acompañada</h3>
-      <p style="margin:0 0 4px">Lo que sueñas para 2027 tiene camino, y Feminario es ese camino: aprendes, practicas y avanzas paso a paso con otras mujeres.</p>
+      <img class="fundadoras" src="assets/fundadoras.jpg" alt="Andre y Tina, fundadoras de Feminario">
+      <h3>Estás a un paso de lograr tu sueño con Feminario</h3>
+      <p style="margin:0 0 4px">Gracias por estar aquí y ser parte de este sueño.</p>
       <a class="btn" href="${esc(CFG.LINK_CATALOGO)}" target="_blank" rel="noopener">Dar mi siguiente paso con Feminario</a>
     </div>
     <p class="suave" style="text-align:center;margin:16px 0 0">Gracias por compartir, ${esc(primerNombre())}. Nos vemos el ${esc(CFG.FECHA_LABEL)}.</p>
-  </div>`;
+  </div>
+  <div id="pdf-doc" style="position:fixed;left:-10000px;top:0;width:700px;background:#fff">${docPDF()}</div>`;
+VISTAS_INIT.cierre = () => {
+  setTimeout(() => lanzarConfeti({ n:220, dur:4200 }), 500);
+  $("#pdf-go").addEventListener("click", () => {
+    const btn = $("#pdf-go"), av = $("#pdf-av"), doc = $("#pdf-doc");
+    const imprimir = () => { av.textContent = "En el cuadro que se abre, elige «Guardar como PDF»."; doc.style.cssText = "position:static;width:auto"; window.print(); };
+    if(window.html2pdf){
+      btn.disabled = true; btn.textContent = "Preparando tu PDF…";
+      window.html2pdf().set({ margin:[10,8,12,8], filename:"mi-cierre-de-ano-feminario.pdf", image:{ type:"jpeg", quality:.96 }, html2canvas:{ scale:2, useCORS:true, backgroundColor:"#ffffff" }, jsPDF:{ unit:"mm", format:"a4", orientation:"portrait" }, pagebreak:{ mode:["css","legacy"] } }).from(doc).save()
+        .then(() => { btn.disabled = false; btn.textContent = "Descargar mi PDF"; av.style.color = "var(--bien)"; av.textContent = "Listo, revisa tus descargas."; })
+        .catch(() => { btn.disabled = false; btn.textContent = "Descargar mi PDF"; imprimir(); });
+    } else imprimir();
+  });
 };
-VISTAS_INIT.cierre = () => { setTimeout(() => lanzarConfeti({ n:220, dur:4200 }), 500); };
 
 ir("bienvenida");
 </script>

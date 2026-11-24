@@ -1,4 +1,4 @@
-# Cierre de Año con Feminario · 20 de diciembre
+# Cierre de Año con Feminario · 1 de diciembre
 
 Artefacto corto (4 pasos) para la llamada de cierre de mes con clientas de un solo curso. Mismo lenguaje visual que [construye-tu-portafolio](https://github.com/Feminario/construye-tu-portafolio): colores del manual, logo, formas, ilustraciones y confeti.
 
