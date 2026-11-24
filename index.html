@@ -498,7 +498,7 @@ VISTAS_INIT.quiero = () => {
 
 /* 6 — Cierre */
 const fmtMetaEstado = e => (ESTADOS.find(x => x[0] === e) || ["",""])[1];
-/* Documento (3 páginas A4): se ve en pantalla y se descarga como PDF, como en «Construye tu portafolio» */
+/* Documento (2 páginas A4: metas y carta primero): se ve en pantalla y se descarga como PDF, como en «Construye tu portafolio» */
 function tablaItems(titulo, xs, f){
   const ys = xs.filter(x => num(x.v) || x.n); if(!ys.length) return "";
   return `<h4>${titulo}</h4><table>${ys.map(f).join("")}</table>`;
@@ -515,21 +515,21 @@ VISTAS.documento = () => {
   const tipoDeu = x => (x.tj !== "" && x.tj !== undefined ? TIPOS_DEUDA[+x.tj]?.[1] : "");
   const kpis = [["Patrimonio", (c.patrimonio < 0 ? "-" : "") + cop(Math.abs(c.patrimonio))], ["Lo que debo", cop(c.de)], ["Colchón", c.colchon === null ? "—" : c.colchon.toFixed(1).replace(".0", "") + " meses"], ["Me queda al mes", c.tasa === null ? "—" : Math.round(c.tasa * 100) + "%"]];
   const p1 = `<div class="doc-persona">${S.foto ? `<img src="${S.foto}" alt="">` : ""}<div><h2>${esc(S.nombre)}</h2><div class="doc-sub">Cumplí ${ok} de ${S.metas.length} ${S.metas.length === 1 ? "meta" : "metas"} este año</div></div></div>
-    <h4>Cómo me fue este año</h4>
+    <h4>Mis metas de este año</h4>
     ${S.metas.map(x => `<div class="doc-meta"><span class="chip ${x.estado}">${fmtMetaEstado(x.estado)}</span> ${esc(x.texto)}</div>`).join("")}
-    <h4>Cómo estoy hoy</h4><div class="doc-kpis">${kpis.map(k => `<div class="doc-kpi"><div class="doc-kpi-k">${k[0]}</div><div class="doc-kpi-v">${k[1]}</div></div>`).join("")}</div>
-    ${c.inv ? `<p style="margin:10px 0 0;font-size:13px">${msgInversion(c)}</p>` : ""}`;
-  const p2 = `${tablaItems("Lo que tengo ahorrado", I.ahorros, x => filaDoc(x.n || "Ahorro", "", m(x.v)))}
+    <h4>Carta a mi yo del 2027</h4><div class="doc-bloque">${esc(S.carta)}</div>
+    ${(S.temas.length || S.quiere) ? `<h4>Lo que me gustaría ver en Feminario</h4><div class="doc-bloque">${S.temas.length ? `<b>Temas:</b> ${esc(S.temas.join(", "))}\n` : ""}${esc(S.quiere)}</div>` : ""}`;
+  const p2 = `<h4 style="margin-top:0">Cómo estoy hoy</h4><div class="doc-kpis">${kpis.map(k => `<div class="doc-kpi"><div class="doc-kpi-k">${k[0]}</div><div class="doc-kpi-v">${k[1]}</div></div>`).join("")}</div>
+    ${c.inv ? `<p style="margin:10px 0 0;font-size:13px">${msgInversion(c)}</p>` : ""}
+    ${tablaItems("Lo que tengo ahorrado", I.ahorros, x => filaDoc(x.n || "Ahorro", "", m(x.v)))}
     ${tablaItems("Mis inversiones", I.inversiones, x => filaDoc(x.n || tipoInv(x) || "Inversión", x.n ? tipoInv(x) : "", m(x.v)))}
     ${tablaItems("Mis bienes", I.bienes, x => filaDoc(x.n || "Bien", x.est === "pagando" ? `lo estoy pagando, me faltan ${m(x.debo)}` : x.est === "mio" ? "ya es mío" : "", m(x.v)))}
     ${tablaItems("Lo que debo", I.deudas, x => filaDoc(x.n || tipoDeu(x) || "Deuda", x.n ? tipoDeu(x) : "", m(x.v)))}
     ${tablaItems("Lo que entra cada mes", I.ingresos, x => filaDoc(x.n || "Ingreso", x.t === "var" ? "variable, promedio al mes" : "fijo", m(x.v)))}
     ${tablaItems("Lo que gasto cada mes", I.gastos, x => filaDoc(x.n || "Gasto", x.t === "var" ? "variable" : "fijo", m(x.v)))}
     ${tablaItems("Lo que ahorro o invierto cada mes", I.aportes, x => filaDoc(x.n || "Aporte", "", m(x.v)))}`;
-  const p3 = `<h4>Carta a mi yo del 2027</h4><div class="doc-bloque">${esc(S.carta)}</div>
-    <h4>Lo que me gustaría ver en Feminario</h4><div class="doc-bloque">${S.temas.length ? `<b>Temas:</b> ${esc(S.temas.join(", "))}\n` : ""}${esc(S.quiere)}</div>`;
   return `<div class="acciones-doc no-print"><button class="btn" id="btn-descargar" type="button">Descargar PDF</button><button class="link-volver" id="volver" type="button">← Volver</button></div>
-    <div class="doc">${pagina(1, 3, "Mi cierre de año", "Cómo me fue y cómo estoy hoy", p1)}${pagina(2, 3, "Mi mini balance", "El detalle de mi plata hoy", p2)}${pagina(3, 3, "Mi carta y mis ideas", "Lo que sueño para 2027", p3)}</div>`;
+    <div class="doc">${pagina(1, 2, "Mi cierre de año", "Mis metas y mi carta al 2027", p1)}${pagina(2, 2, "Mi mini balance", "Cómo estoy hoy y el detalle de mi plata", p2)}</div>`;
 };
 function cargarScript(url){ return new Promise((ok, mal) => { if(document.querySelector('script[src="' + url + '"]')) return ok(); const t = document.createElement("script"); t.src = url; t.onload = ok; t.onerror = () => mal(new Error("No se pudo cargar " + url)); document.head.appendChild(t); }); }
 async function descargarPDF(){
