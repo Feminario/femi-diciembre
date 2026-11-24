@@ -6,7 +6,7 @@ Artefacto corto (4 pasos) para la llamada de cierre de mes con clientas de un so
 
 | Ruta | Para qué |
 |---|---|
-| `index.html` | Lo que usa cada clienta (celular). Bienvenida → **1** lo que más le gusta de Feminario → **2** su meta en sus palabras y lo que le falta → **3** mini balance con panel bonito → **4** reflexión del año → cierre. Entre pasos hay pantallas con foto y confeti. |
+| `index.html` | Lo que usa cada clienta (celular). Bienvenida (nombre, correo, WhatsApp y **foto obligatoria**) → **1** metas del año (cuáles cumplió y cuáles no) → **2** mini balance con inversiones en detalle y panel → **3** carta a su yo del 2027 → **4** qué le gustaría ver en Feminario → cierre. Sin fotos ni stickers; solo confeti. |
 | `admin/index.html` | Pantalla para **compartir en el Meet**: palabras más repetidas (nube + ranking, clic en una palabra para ver quién la dijo), metas, balance agregado (sin montos) y reflexión. Se actualiza sola cada 10 s y lanza confeti cuando llega una respuesta nueva. Botón "Modo presentación" y "Datos de ejemplo" para ensayar. |
 | `assets/config.js` | **Único archivo de configuración** (URL del Sheet, link, fecha). |
 | `apps-script/cierre.gs` | Backend en Google Sheets. |
@@ -25,3 +25,7 @@ GitHub Pages (Settings → Pages → rama `main`, carpeta raíz): clientas en `�
 
 ## Fotos
 `assets/foto-ventana.jpg` y `assets/foto-sonrisas.jpg` se reparten en bienvenida, transiciones y cierre. Para sumar más, agrégalas a `assets/` y cámbialas en las vistas `t1`, `t2`, `t3` de `index.html`.
+
+
+## Comunidad (panel de Customer Success)
+Cada paso se envía a `COMUNIDAD_API` (`assets/config.js`) = `/api/comunidad` del panel de Feminario: guarda sus datos, la foto (bucket privado) y sus respuestas, y aparecen como tarjetas en Customer Success → Comunidad. La pantalla `admin/` y `apps-script/cierre.gs` (Sheet para el Meet) siguen con la estructura anterior y no se alimentan de este flujo.
