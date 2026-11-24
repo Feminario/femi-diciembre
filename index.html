@@ -19,9 +19,10 @@
   .paso-txt{ text-align:center; font-size:12px; color:var(--morado-suave); margin:-8px 0 16px; font-weight:600; letter-spacing:.3px; }
   .screen{ animation:entra .45s ease both; }
   @keyframes entra{ from{ opacity:0; transform:translateY(14px); } to{ opacity:1; transform:none; } }
-  .kicker{ font-size:12px; font-weight:800; letter-spacing:1.3px; text-transform:uppercase; color:var(--morado); margin-bottom:6px; }
-  .titulo{ font-size:28px; margin:0 0 6px; line-height:1.15; }
-  .bajada{ font-size:15px; color:var(--morado-oscuro); margin:0 0 6px; }
+  .kicker{ font-size:12px; font-weight:800; letter-spacing:1.3px; text-transform:uppercase; color:var(--morado); margin-bottom:6px; text-align:center; }
+  .titulo{ font-size:28px; margin:0 0 6px; line-height:1.15; text-align:center; }
+  .bajada{ font-size:15px; color:var(--morado-oscuro); margin:0 0 6px; text-align:center; }
+  .avatar{ display:block; width:92px; height:92px; border-radius:50%; object-fit:cover; margin:0 auto 12px; border:3px solid var(--periwinkle); }
   .opciones{ display:flex; flex-direction:column; gap:9px; }
   .acciones{ display:flex; gap:10px; }
   .acciones .btn{ margin-top:22px; }
@@ -54,6 +55,12 @@
   .monto-wrap input{ padding-left:32px; }
   .grupo-titulo{ margin:26px 0 0; font-weight:800; color:var(--morado); font-size:14px; display:flex; align-items:center; gap:8px; }
   .grupo-titulo i{ width:12px; height:12px; border-radius:50%; display:inline-block; }
+  .fila-bal{ background:rgba(255,255,255,.7); border:1px solid rgba(126,132,174,.2); border-radius:18px; padding:12px; margin:10px 0; display:grid; gap:8px; position:relative; }
+  .fila-bal select, .fila-bal input[type=text]{ padding:11px 13px; font-size:14.5px; }
+  .fila-bal .monto-wrap input{ padding-left:32px; }
+  .fila-bal .mini-lbl{ font-size:12px; font-weight:700; color:var(--morado-oscuro); margin:2px 0 -4px; }
+  .fila-bal .q{ position:absolute; top:6px; right:10px; background:none; border:none; color:var(--morado-suave); font-size:20px; cursor:pointer; line-height:1; }
+  .mas-fila{ margin-top:2px; }
   .subgrupo{ margin:14px 0 0; font-size:12.5px; font-weight:800; color:var(--morado-oscuro); background:rgba(206,162,221,.25); border-radius:12px; padding:8px 12px; }
 
   /* Panel de balance */
@@ -111,7 +118,7 @@
 const CFG = window.CIERRE;
 function uid(){ return "c" + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
 const BAL0 = { ahorro:"", cdt:"", fondos:"", acciones:"", cripto:"", finca:"", pension:"", dolares:"", otras_inv:"", otros_bienes:"", tarjetas:"", creditos:"", otras_deudas:"", ingreso:"", gasto_fijo:"", gasto_var:"", inv_mes:"" };
-const S = { id: uid(), nombre:"", email:"", whatsapp:"", foto:"", fotoEnviada:false, consentimiento:false, metas:[{ texto:"", estado:"" }], bal:Object.assign({}, BAL0), carta:"", temas:[], quiere:"" };
+const S = { id: uid(), nombre:"", email:"", whatsapp:"", foto:"", fotoEnviada:false, consentimiento:false, metas:[{ texto:"", estado:"" }], bal:Object.assign({}, BAL0), items:{ ahorros:[{}], inversiones:[{}], bienes:[{}], deudas:[{}], ingresos:[{}], gastos:[{}], aportes:[{}] }, carta:"", temas:[], quiere:"" };
 
 function guardarLocal(){
   try{
@@ -126,7 +133,7 @@ async function enviar(paso){
   if(!CFG.COMUNIDAD_API) return true;
   const quiereVer = [S.temas.length ? "Temas: " + S.temas.join(", ") : "", S.quiere].filter(Boolean).join("\n");
   const payload = { id:S.id, paso, nombre:S.nombre, email:S.email, whatsapp:S.whatsapp, consentimiento:S.consentimiento,
-    metas:S.metas.filter(m => m.texto.trim()), balance:S.bal, carta:S.carta, quiereVer };
+    metas:S.metas.filter(m => m.texto.trim()), balance:S.bal, detalle:S.items, carta:S.carta, quiereVer };
   if(!S.fotoEnviada) payload.foto = S.foto;
   for(let intento = 0; intento < 2; intento++){
     try{
@@ -156,8 +163,7 @@ const grupoDe = { bienvenida:-1, metas:0, balance:1, panel:1, carta:2, quiero:3,
 function pintarProgreso(){
   const cont = $("#progreso"), g = grupoDe[actual];
   if(g < 0 || g > 3){ cont.innerHTML = ""; return; }
-  cont.innerHTML = `<div class="progreso">${PRINCIPALES.map((_,i)=>`<div class="dot ${i<g?"hecho":""} ${i===g?"activo":""}"></div>`).join("")}</div>
-    <div class="paso-txt">Paso ${g+1} de 4</div>`;
+  cont.innerHTML = `<div class="progreso">${PRINCIPALES.map((_,i)=>`<div class="dot ${i<g?"hecho":""} ${i===g?"activo":""}"></div>`).join("")}</div>`;
 }
 function ir(id, celebrar){
   actual = id; pintarProgreso();
@@ -254,7 +260,6 @@ function filaMeta(m, i){
 }
 VISTAS.metas = () => `
   <div class="card">
-    <div class="kicker">Paso 1</div>
     <h2 class="titulo">Tus metas del año</h2>
     <p class="bajada">¿Qué te propusiste en 2026? Escríbelas y marca cuáles cumpliste y cuáles no. Todo cuenta, también lo que quedó a medias.</p>
     <div id="metas"></div>
@@ -284,47 +289,80 @@ VISTAS_INIT.metas = () => {
   });
 };
 
-/* 2 — Mini balance (con inversiones en detalle) */
-function campoMonto(id, label){
-  return `<label for="${id}">${label}</label><div class="monto-wrap"><span>$</span><input type="text" inputmode="numeric" id="${id}" placeholder="0" value="${S.bal[id] ? num(S.bal[id]).toLocaleString("es-CO") : ""}"></div>`;
+/* 2 — Mini balance: cada categoría es una lista donde puede agregar todo lo que tenga (como las metas) */
+const TIPOS_INV = [["cdt","CDT y renta fija"],["fondos","Fondos de inversión"],["acciones","Acciones y ETF"],["cripto","Criptomonedas"],["finca","Finca raíz"],["pension","Pensión voluntaria o cesantías invertidas"],["dolares","Dólares u oro"],["otras_inv","Otra inversión"]];
+const TIPOS_DEUDA = [["tarjetas","Tarjeta de crédito"],["creditos","Crédito de libre inversión"],["creditos","Crédito de vivienda"],["creditos","Crédito de vehículo"],["creditos","Crédito educativo"],["otras_deudas","Familia o amigas"],["otras_deudas","Fiado u otra deuda"]];
+const GRUPOS = [
+  { k:"ahorros", titulo:"Lo que tengo ahorrado", color:"var(--morado)", una:"ahorro", ph:"Cuenta de ahorros, efectivo, fondo de emergencia…" },
+  { k:"inversiones", titulo:"Mis inversiones", color:"var(--lavanda)", una:"inversión", tipo:TIPOS_INV, ph:"¿Dónde la tienes? (opcional)" },
+  { k:"bienes", titulo:"Mis bienes", color:"var(--periwinkle)", una:"bien", bien:true, ph:"Casa, carro, negocio, terreno…" },
+  { k:"deudas", titulo:"Lo que debo", color:"var(--alerta)", una:"deuda", tipo:TIPOS_DEUDA, ph:"¿A quién o dónde? (opcional)" },
+  { k:"ingresos", titulo:"Lo que entra cada mes", color:"var(--verde)", una:"ingreso", ph:"Salario, negocio, arriendo, pensión…" },
+  { k:"gastos", titulo:"Lo que gasto cada mes", color:"var(--durazno)", una:"gasto", gasto:true, ph:"Vivienda, mercado, transporte, salidas…" },
+  { k:"aportes", titulo:"Lo que ahorro o invierto cada mes", color:"var(--morado)", una:"aporte", ph:"Cuota del fondo, CDT mensual, ahorro programado…" }
+];
+const sum = (xs, f) => xs.reduce((t, x) => t + (f ? f(x) : num(x.v)), 0);
+/* Convierte las listas a los totales que usa el panel y que recibe Feminario */
+function agregar(){
+  const I = S.items, b = Object.assign({}, BAL0);
+  b.ahorro = sum(I.ahorros);
+  I.inversiones.forEach(x => { const k = x.t || "otras_inv"; b[k] = num(b[k]) + num(x.v); });
+  b.otros_bienes = sum(I.bienes);
+  I.deudas.forEach(x => { const k = x.t || "otras_deudas"; b[k] = num(b[k]) + num(x.v); });
+  b.creditos = num(b.creditos) + sum(I.bienes.filter(x => x.est === "pagando"), x => num(x.debo));   // lo que le falta pagar de un bien cuenta como deuda
+  b.ingreso = sum(I.ingresos);
+  I.gastos.forEach(x => { const k = x.t === "var" ? "gasto_var" : "gasto_fijo"; b[k] = num(b[k]) + num(x.v); });
+  b.inv_mes = sum(I.aportes);
+  Object.keys(b).forEach(k => { b[k] = b[k] ? String(b[k]) : ""; });
+  S.bal = b;
+}
+function filaBal(g, x, i){
+  const m = n => n ? Number(num(n)).toLocaleString("es-CO") : "";
+  let h = `<div class="fila-bal" data-g="${g.k}" data-i="${i}"><button type="button" class="q" data-q aria-label="Quitar">×</button>`;
+  if(g.tipo) h += `<select data-f="tsel"><option value="">${g.k === "deudas" ? "¿Qué tipo de deuda?" : "¿Qué tipo de inversión?"}</option>${g.tipo.map(([v,t],j) => `<option value="${j}" ${x.tj === String(j) ? "selected" : ""}>${t}</option>`).join("")}</select>`;
+  if(g.gasto) h += `<select data-f="t"><option value="fijo" ${x.t !== "var" ? "selected" : ""}>Gasto fijo (vivienda, servicios, cuotas)</option><option value="var" ${x.t === "var" ? "selected" : ""}>Gasto variable (mercado, salidas, antojos)</option></select>`;
+  h += `<input type="text" data-f="n" placeholder="${esc(g.ph)}" value="${esc(x.n || "")}">`;
+  h += `<div class="monto-wrap"><span>$</span><input type="text" inputmode="numeric" data-f="v" placeholder="${g.bien ? "¿Cuánto vale hoy?" : "Valor"}" value="${m(x.v)}"></div>`;
+  if(g.bien){
+    h += `<div class="mini-lbl">¿Ya es tuyo?</div><div class="estados"><button type="button" class="estado ${x.est === "mio" ? "sel" : ""}" data-est="mio">Ya es mío</button><button type="button" class="estado ${x.est === "pagando" ? "sel" : ""}" data-est="pagando">Lo estoy pagando</button></div>`;
+    if(x.est === "pagando") h += `<div class="mini-lbl">¿Cuánto te falta por pagar?</div><div class="monto-wrap"><span>$</span><input type="text" inputmode="numeric" data-f="debo" placeholder="Saldo de la deuda" value="${m(x.debo)}"></div>`;
+  }
+  return h + `</div>`;
 }
 VISTAS.balance = () => `
   <div class="card">
-    <div class="kicker">Paso 2</div>
     <h2 class="titulo">Tu mini balance</h2>
-    <p class="bajada">Una foto de tu plata hoy. Con números aproximados está perfecto.</p>
-    <div class="grupo-titulo"><i style="background:var(--morado)"></i>Lo que tengo</div>
-    ${campoMonto("ahorro","Ahorros y efectivo disponible")}
-    <div class="subgrupo">Mis inversiones</div>
-    ${campoMonto("cdt","CDT y renta fija")}
-    ${campoMonto("fondos","Fondos de inversión")}
-    ${campoMonto("acciones","Acciones y ETF")}
-    ${campoMonto("cripto","Criptomonedas")}
-    ${campoMonto("finca","Finca raíz")}
-    ${campoMonto("pension","Pensión voluntaria o cesantías invertidas")}
-    ${campoMonto("dolares","Dólares u oro")}
-    ${campoMonto("otras_inv","Otras inversiones")}
-    <div class="subgrupo">Otros bienes</div>
-    ${campoMonto("otros_bienes","Casa, carro, negocio…")}
-    <div class="grupo-titulo"><i style="background:var(--alerta)"></i>Lo que debo</div>
-    ${campoMonto("tarjetas","Tarjetas de crédito")}
-    ${campoMonto("creditos","Créditos y préstamos (libre inversión, vehículo, vivienda, estudio)")}
-    ${campoMonto("otras_deudas","Otras deudas (familia, amigas, fiado)")}
-    <div class="grupo-titulo"><i style="background:var(--verde);border:1px solid #b8d97a"></i>Mi mes a mes</div>
-    ${campoMonto("ingreso","Lo que entra al mes")}
-    ${campoMonto("gasto_fijo","Gastos fijos (vivienda, servicios, cuotas)")}
-    ${campoMonto("gasto_var","Gastos variables (mercado, salidas, antojos)")}
-    ${campoMonto("inv_mes","Lo que ahorro o invierto cada mes")}
+    <p class="bajada">Una foto de tu plata hoy. En cada categoría agrega todo lo que tengas, con números aproximados.</p>
+    ${GRUPOS.map(g => `<div class="grupo-titulo"><i style="background:${g.color};${g.k === "ingresos" ? "border:1px solid #b8d97a" : ""}"></i>${g.titulo}</div><div id="g-${g.k}"></div><button type="button" class="btn secundario chico mas-fila" data-mas="${g.k}">+ Agregar ${g.una}</button>`).join("")}
     <div class="microcopy">Si algo no aplica, déjalo en blanco. Estos números los ve solo el equipo de Feminario, para acompañarte mejor.</div>
     <div class="error" id="err"></div>
     ${btnsNav({ texto:"Ver mi foto de hoy" })}
   </div>`;
 VISTAS_INIT.balance = () => {
-  Object.keys(S.bal).forEach(k => {
-    const el = document.getElementById(k); if(!el) return;
-    el.addEventListener("input", () => { const n = num(el.value); el.value = n ? n.toLocaleString("es-CO") : ""; S.bal[k] = String(n); });
+  const gDe = k => GRUPOS.find(g => g.k === k);
+  const pintar = k => { const g = gDe(k); $("#g-" + k).innerHTML = S.items[k].map((x, i) => filaBal(g, x, i)).join(""); };
+  const leer = () => document.querySelectorAll(".fila-bal").forEach(f => {
+    const g = gDe(f.dataset.g), x = S.items[g.k][+f.dataset.i];
+    f.querySelectorAll("[data-f]").forEach(el => {
+      const c = el.dataset.f;
+      if(c === "tsel"){ x.tj = el.value; x.t = el.value === "" ? "" : g.tipo[+el.value][0]; }
+      else if(c === "v" || c === "debo") x[c] = String(num(el.value));
+      else x[c] = el.value;
+    });
+  });
+  GRUPOS.forEach(g => pintar(g.k));
+  const cont = $("#vista");
+  cont.addEventListener("input", e => { if(e.target.dataset.f === "v" || e.target.dataset.f === "debo"){ const n = num(e.target.value); e.target.value = n ? n.toLocaleString("es-CO") : ""; } leer(); });
+  cont.addEventListener("change", e => { if(e.target.dataset.f) leer(); });
+  cont.addEventListener("click", e => {
+    if(e.target.dataset.mas){ leer(); S.items[e.target.dataset.mas].push({}); pintar(e.target.dataset.mas); return; }
+    const f = e.target.closest(".fila-bal"); if(!f) return; leer();
+    const k = f.dataset.g, i = +f.dataset.i;
+    if(e.target.hasAttribute("data-q")){ S.items[k].splice(i, 1); if(!S.items[k].length) S.items[k].push({}); pintar(k); }
+    if(e.target.dataset.est){ S.items[k][i].est = e.target.dataset.est; pintar(k); }
   });
   nav(() => {
+    leer(); agregar();
     if(!Object.values(S.bal).some(v => num(v))){ $("#err").textContent = "Llena al menos un campo para armar tu panel."; return; }
     avanzar(2, true);
   });
@@ -361,7 +399,7 @@ VISTAS.panel = () => {
   const c = calcular(), tot = c.activos || 1, pct = x => Math.max(0, Math.min(100, x));
   return `
   <div class="card">
-    <div class="kicker">Tu foto de hoy</div>
+        ${S.foto ? `<img class="avatar" src="${S.foto}" alt="${esc(S.nombre)}">` : ""}
     <h2 class="titulo">Así estás hoy, ${esc(primerNombre())}</h2>
     <div class="hero-balance"><div class="rotulo">Mi patrimonio hoy</div><div class="monto">${c.patrimonio < 0 ? "-" : ""}${cop(Math.abs(c.patrimonio))}</div><p class="frase">${fraseHero(c)}</p></div>
     ${c.activos > 0 ? `
@@ -388,7 +426,7 @@ VISTAS_INIT.panel = () => {
 /* 4 — Carta a mi yo del 2027 */
 VISTAS.carta = () => `
   <div class="card">
-    <div class="kicker">Paso 3</div>
+    ${S.foto ? `<img class="avatar" src="${S.foto}" alt="${esc(S.nombre)}">` : ""}
     <h2 class="titulo">Carta a mi yo del 2027</h2>
     <p class="bajada">Mírate dentro de un año. ¿Cómo te imaginas? Cómo está tu plata, cómo te sientes y qué decisiones tomaste para llegar ahí.</p>
     <label for="carta">Querida yo de diciembre de 2027…</label>
@@ -406,7 +444,6 @@ VISTAS_INIT.carta = () => nav(() => {
 const TEMAS = ["Invertir","Salir de deudas","Presupuesto y ahorro","Emprender","Plata en pareja","Mi retiro","Plata y maternidad","Impuestos","La Femiapp","Más comunidad"];
 VISTAS.quiero = () => `
   <div class="card">
-    <div class="kicker">Paso 4</div>
     <h2 class="titulo">¿Qué te gustaría ver en Feminario?</h2>
     <p class="bajada">Feminario se construye con ustedes. Cuéntanos qué te falta y qué sueñas encontrar aquí.</p>
     <label>Temas que te interesan <span class="suave">(elige los que quieras)</span></label>
@@ -430,7 +467,7 @@ VISTAS.cierre = () => {
   const ok = S.metas.filter(m => m.estado === "cumpli").length, c = calcular();
   return `
   <div class="card">
-    <div class="kicker">Tu cierre de año</div>
+    ${S.foto ? `<img class="avatar" src="${S.foto}" alt="${esc(S.nombre)}">` : ""}
     <h1 class="titulo">Lo lograste, ${esc(primerNombre())}</h1>
     <p class="bajada">Miraste tu año de frente. Eso ya es cuidarte.</p>
     <div class="resumen"><h3>Tus metas</h3><p style="margin:0 0 8px">Cumpliste <b>${ok}</b> de <b>${S.metas.length}</b>.</p>
