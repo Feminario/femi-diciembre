@@ -98,9 +98,10 @@
   .cta{ background:linear-gradient(135deg,rgba(206,162,221,.6),rgba(194,203,255,.55)); border-radius:24px; padding:24px 22px; margin:18px 0 0; text-align:center; }
   .cta h3{ font-size:21px; color:var(--morado-oscuro); }
   .cta img.fundadoras{ display:block; width:100%; height:auto; border-radius:18px; margin:0 0 14px; }
+  .card, .resumen, .meta-quote, .cta{ overflow-wrap:anywhere; word-break:break-word; }
   .meta-quote{ text-align:center; font-family:'MuseoModerno',sans-serif; font-size:20px; line-height:1.35; color:var(--morado-oscuro); margin:8px 4px 14px; }
   .centro{ text-align:center; }
-  @media print{ body *{ visibility:hidden } #pdf-doc, #pdf-doc *{ visibility:visible } #pdf-doc{ position:absolute!important; left:0!important; top:0!important; width:100%!important } }
+  @media print{ body *{ visibility:hidden } #pdf-doc, .pdfd *{ visibility:visible } #pdf-doc{ position:absolute!important; left:0!important; top:0!important; width:100%!important } }
   .toast{ position:fixed; left:50%; bottom:22px; transform:translateX(-50%); background:var(--morado-oscuro); color:#fff; padding:11px 20px; border-radius:999px; font-size:13.5px; font-weight:600; z-index:300; box-shadow:0 10px 30px rgba(0,0,0,.25); }
 </style>
 </head>
@@ -476,11 +477,11 @@ function docPDF(){
   const c = calcular(), I = S.items, m = v => cop(num(v));
   const lista = (titulo, xs, f) => xs.filter(x => num(x.v) || x.n).length ? `<h3>${titulo}</h3>${xs.filter(x => num(x.v) || x.n).map(f).join("")}` : "";
   const fila = (n, v, extra) => `<div class="f"><span>${esc(n)}${extra ? ` <i>${esc(extra)}</i>` : ""}</span><b>${v}</b></div>`;
-  return `<div style="font-family:Montserrat,Arial,sans-serif;color:#3A3550;padding:6px 4px;line-height:1.5">
-    <style>#pdf-doc h1{font-family:MuseoModerno,Montserrat,sans-serif;font-size:26px;margin:6px 0 0;color:#4C4F68}#pdf-doc h2{font-family:MuseoModerno,Montserrat,sans-serif;font-size:18px;color:#fff;background:#7E84AE;border-radius:12px;padding:6px 14px;margin:22px 0 10px;display:inline-block}
-    #pdf-doc h3{font-size:13px;color:#7E84AE;margin:12px 0 4px;text-transform:uppercase;letter-spacing:.6px}#pdf-doc .f{display:flex;justify-content:space-between;gap:12px;padding:5px 0;border-bottom:1px dashed #d6d8e6;font-size:13px}#pdf-doc .f i{color:#8A90B8;font-style:normal;font-size:11.5px}
-    #pdf-doc .meta{padding:6px 0;font-size:13.5px}#pdf-doc .chip{display:inline-block;font-size:11px;font-weight:800;padding:3px 10px;border-radius:999px;background:#C2CBFF;margin-right:6px}#pdf-doc .chip.cumpli{background:#DFF3AF}#pdf-doc .chip.no{background:#F9E1FF}
-    #pdf-doc p{margin:0 0 8px;font-size:13.5px;white-space:pre-wrap}#pdf-doc .tot{background:linear-gradient(135deg,#dfe3ff,#ecd3f4);border-radius:16px;padding:14px;text-align:center;margin:8px 0}#pdf-doc .tot b{font-size:26px;font-family:MuseoModerno,sans-serif;color:#4C4F68}</style>
+  return `<div class="pdfd" style="font-family:Montserrat,Arial,sans-serif;color:#3A3550;padding:6px 4px;line-height:1.5;width:700px;background:#fff">
+    <style>.pdfd h1{font-family:MuseoModerno,Montserrat,sans-serif;font-size:26px;margin:6px 0 0;color:#4C4F68}.pdfd h2{font-family:MuseoModerno,Montserrat,sans-serif;font-size:18px;color:#fff;background:#7E84AE;border-radius:12px;padding:6px 14px;margin:22px 0 10px;display:inline-block}
+    .pdfd h3{font-size:13px;color:#7E84AE;margin:12px 0 4px;text-transform:uppercase;letter-spacing:.6px}.pdfd .f{display:flex;justify-content:space-between;gap:12px;padding:5px 0;border-bottom:1px dashed #d6d8e6;font-size:13px}.pdfd .f i{color:#8A90B8;font-style:normal;font-size:11.5px}
+    .pdfd .meta{padding:6px 0;font-size:13.5px}.pdfd .chip{display:inline-block;font-size:11px;font-weight:800;padding:3px 10px;border-radius:999px;background:#C2CBFF;margin-right:6px}.pdfd .chip.cumpli{background:#DFF3AF}.pdfd .chip.no{background:#F9E1FF}
+    .pdfd p{margin:0 0 8px;font-size:13.5px;white-space:pre-wrap}.pdfd .tot{background:linear-gradient(135deg,#dfe3ff,#ecd3f4);border-radius:16px;padding:14px;text-align:center;margin:8px 0}.pdfd .tot b{font-size:26px;font-family:MuseoModerno,sans-serif;color:#4C4F68}</style>
     <div style="text-align:center"><img src="assets/logo-feminario.png" style="height:38px" alt=""><br>
       ${S.foto ? `<img src="${S.foto}" style="width:84px;height:84px;border-radius:50%;object-fit:cover;margin-top:12px;border:3px solid #C2CBFF" alt="">` : ""}
       <h1>${esc(S.nombre)}</h1><div style="font-size:12.5px;color:#8A90B8">Mi cierre de año · ${esc(CFG.FECHA_LABEL)}</div></div>
@@ -500,14 +501,25 @@ function docPDF(){
     ${S.temas.length ? `<p><b>Temas:</b> ${esc(S.temas.join(", "))}</p>` : ""}${S.quiere ? `<p>${esc(S.quiere)}</p>` : ""}
     <p style="text-align:center;color:#8A90B8;font-size:11px;margin-top:22px">Feminario · @feminario.co · Contenido educativo, no asesoría financiera personalizada.</p></div>`;
 }
-VISTAS.cierre = () => `
+const filaRes = (n, v) => `<div class="inv-fila"><span>${esc(n)}</span><b>${v}</b></div>`;
+VISTAS.cierre = () => {
+  const c = calcular(), I = S.items;
+  const tipoDe = (g, x) => (x.tj !== "" && x.tj !== undefined ? (g === "inv" ? TIPOS_INV : TIPOS_DEUDA)[+x.tj]?.[1] : "");
+  const quote = S.carta.length > 160 ? S.carta.slice(0, 160).trim() + "…" : S.carta;
+  return `
   <div class="card">
     ${S.foto ? `<img class="avatar" src="${S.foto}" alt="${esc(S.nombre)}">` : ""}
     <h1 class="titulo">Lo lograste, ${esc(primerNombre())}</h1>
-    <p class="meta-quote">“${esc(S.carta.length > 240 ? S.carta.slice(0, 240).trim() + "…" : S.carta)}”</p>
+    <p class="meta-quote">“${esc(quote)}”</p>
     <div class="resumen"><h3 class="centro">Cómo te fue este año</h3>
       ${S.metas.map(m => `<div style="margin:6px 0"><span class="chip ${m.estado}">${fmtMetaEstado(m.estado)}</span> ${esc(m.texto)}</div>`).join("")}</div>
-    <div class="resumen"><h3 class="centro">Cómo estás hoy</h3><p style="margin:0;text-align:center">Patrimonio de <b>${calcular().patrimonio < 0 ? "-" : ""}${cop(Math.abs(calcular().patrimonio))}</b>${calcular().inv ? `, con <b>${cop(calcular().inv)}</b> invertidos` : ""}.</p></div>
+    <div class="resumen"><h3 class="centro">Cómo estás hoy</h3>
+      <p style="margin:0 0 8px;text-align:center">Patrimonio de <b>${c.patrimonio < 0 ? "-" : ""}${cop(Math.abs(c.patrimonio))}</b></p>
+      ${[["Ahorros", c.ah], ["Inversiones", c.inv], ["Bienes", c.ot], ["Deudas", c.de], ["Entra cada mes", c.ing], ["Gastos cada mes", c.ga], ["Ahorras o inviertes cada mes", c.invMes]].filter(x => x[1]).map(x => filaRes(x[0], cop(x[1]))).join("")}
+      ${I.bienes.filter(x => x.est && num(x.v)).map(x => filaRes(`${x.n || "Bien"}`, x.est === "pagando" ? `lo estás pagando (falta ${cop(num(x.debo))})` : "ya es tuyo")).join("")}
+      ${I.ingresos.some(x => x.t === "var" && num(x.v)) ? `<p class="suave" style="margin:8px 0 0">Parte de tus ingresos es variable (promedio al mes).</p>` : ""}</div>
+    <div class="resumen"><h3 class="centro">Tu carta a tu yo del 2027</h3><p style="margin:0"><q>${esc(S.carta)}</q></p></div>
+    ${S.temas.length || S.quiere ? `<div class="resumen"><h3 class="centro">Lo que te gustaría ver en Feminario</h3>${S.temas.length ? `<p style="margin:0 0 6px">${S.temas.map(t => `<span class="chip">${esc(t)}</span>`).join("")}</p>` : ""}${S.quiere ? `<p style="margin:0">${esc(S.quiere)}</p>` : ""}</div>` : ""}
     <button class="btn secundario" id="pdf-go" type="button">Descargar mi PDF</button>
     <div class="error" id="pdf-av" style="text-align:center"></div>
     <div class="cta">
@@ -517,16 +529,16 @@ VISTAS.cierre = () => `
       <a class="btn" href="${esc(CFG.LINK_CATALOGO)}" target="_blank" rel="noopener">Dar mi siguiente paso con Feminario</a>
     </div>
     <p class="suave" style="text-align:center;margin:16px 0 0">Gracias por compartir, ${esc(primerNombre())}. Nos vemos el ${esc(CFG.FECHA_LABEL)}.</p>
-  </div>
-  <div id="pdf-doc" style="position:fixed;left:-10000px;top:0;width:700px;background:#fff">${docPDF()}</div>`;
+  </div>`;
+};
 VISTAS_INIT.cierre = () => {
   setTimeout(() => lanzarConfeti({ n:220, dur:4200 }), 500);
   $("#pdf-go").addEventListener("click", () => {
-    const btn = $("#pdf-go"), av = $("#pdf-av"), doc = $("#pdf-doc");
-    const imprimir = () => { av.textContent = "En el cuadro que se abre, elige «Guardar como PDF»."; doc.style.cssText = "position:static;width:auto"; window.print(); };
+    const btn = $("#pdf-go"), av = $("#pdf-av");
+    const imprimir = () => { const w = window.open("", "_blank"); if(!w){ av.textContent = "Permite las ventanas emergentes para guardar tu PDF."; return; } w.document.write(`<!doctype html><meta charset="utf-8"><title>Mi cierre de año</title><base href="${location.href}">${docPDF()}`); w.document.close(); setTimeout(() => w.print(), 700); av.textContent = "En el cuadro que se abre, elige «Guardar como PDF»."; };
     if(window.html2pdf){
-      btn.disabled = true; btn.textContent = "Preparando tu PDF…";
-      window.html2pdf().set({ margin:[10,8,12,8], filename:"mi-cierre-de-ano-feminario.pdf", image:{ type:"jpeg", quality:.96 }, html2canvas:{ scale:2, useCORS:true, backgroundColor:"#ffffff" }, jsPDF:{ unit:"mm", format:"a4", orientation:"portrait" }, pagebreak:{ mode:["css","legacy"] } }).from(doc).save()
+      btn.disabled = true; btn.textContent = "Preparando tu PDF…"; av.textContent = ""; window.scrollTo(0, 0);
+      window.html2pdf().set({ margin:[10,8,12,8], filename:"mi-cierre-de-ano-feminario.pdf", image:{ type:"jpeg", quality:.96 }, html2canvas:{ scale:2, useCORS:true, backgroundColor:"#ffffff", windowWidth:720, scrollX:0, scrollY:0 }, jsPDF:{ unit:"mm", format:"a4", orientation:"portrait" }, pagebreak:{ mode:["css","legacy"], avoid:[".f",".meta","h2"] } }).from(docPDF(), "string").save()
         .then(() => { btn.disabled = false; btn.textContent = "Descargar mi PDF"; av.style.color = "var(--bien)"; av.textContent = "Listo, revisa tus descargas."; })
         .catch(() => { btn.disabled = false; btn.textContent = "Descargar mi PDF"; imprimir(); });
     } else imprimir();
