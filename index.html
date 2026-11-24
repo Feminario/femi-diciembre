@@ -302,7 +302,7 @@ const GRUPOS = [
   { k:"inversiones", titulo:"Mis inversiones", color:"var(--lavanda)", una:"inversión", tipo:TIPOS_INV, ph:"¿Dónde la tienes? (opcional)" },
   { k:"bienes", titulo:"Mis bienes", color:"var(--periwinkle)", una:"bien", bien:true, ph:"Casa, carro, negocio, terreno…" },
   { k:"deudas", titulo:"Lo que debo", color:"var(--alerta)", una:"deuda", tipo:TIPOS_DEUDA, ph:"¿A quién o dónde? (opcional)" },
-  { k:"ingresos", titulo:"Lo que entra cada mes", color:"var(--verde)", una:"ingreso", ph:"Salario, negocio, arriendo, pensión…" },
+  { k:"ingresos", titulo:"Lo que entra cada mes", color:"var(--verde)", una:"ingreso", ingreso:true, ph:"Salario, negocio, arriendo, pensión…" },
   { k:"gastos", titulo:"Lo que gasto cada mes", color:"var(--durazno)", una:"gasto", gasto:true, ph:"Vivienda, mercado, transporte, salidas…" },
   { k:"aportes", titulo:"Lo que ahorro o invierto cada mes", color:"var(--morado)", una:"aporte", ph:"Cuota del fondo, CDT mensual, ahorro programado…" }
 ];
@@ -326,8 +326,9 @@ function filaBal(g, x, i){
   let h = `<div class="fila-bal" data-g="${g.k}" data-i="${i}">`;
   if(g.tipo) h += `<select data-f="tsel"><option value="">${g.k === "deudas" ? "¿Qué tipo de deuda?" : "¿Qué tipo de inversión?"}</option>${g.tipo.map(([v,t],j) => `<option value="${j}" ${x.tj === String(j) ? "selected" : ""}>${t}</option>`).join("")}</select>`;
   if(g.gasto) h += `<select data-f="t"><option value="fijo" ${x.t !== "var" ? "selected" : ""}>Gasto fijo (vivienda, servicios, cuotas)</option><option value="var" ${x.t === "var" ? "selected" : ""}>Gasto variable (mercado, salidas, antojos)</option></select>`;
+  if(g.ingreso) h += `<div class="estados"><button type="button" class="estado ${x.t !== "var" ? "sel" : ""}" data-ing="fijo">Ingreso fijo</button><button type="button" class="estado ${x.t === "var" ? "sel" : ""}" data-ing="var">Ingreso variable</button></div>${x.t === "var" ? `<div class="mini-lbl">Cambia cada mes: pon cuánto te entra en promedio</div>` : ""}`;
   h += `<input type="text" data-f="n" placeholder="${esc(g.ph)}" value="${esc(x.n || "")}">`;
-  h += `<div class="monto-wrap"><span>$</span><input type="text" inputmode="numeric" data-f="v" placeholder="${g.bien ? "¿Cuánto vale hoy?" : "Valor"}" value="${m(x.v)}"></div>`;
+  h += `<div class="monto-wrap"><span>$</span><input type="text" inputmode="numeric" data-f="v" placeholder="${g.bien ? "¿Cuánto vale hoy?" : x.t === "var" && g.ingreso ? "Promedio al mes" : "Valor"}" value="${m(x.v)}"></div>`;
   if(g.bien){
     h += `<div class="mini-lbl">¿Ya es tuyo?</div><div class="estados"><button type="button" class="estado ${x.est === "mio" ? "sel" : ""}" data-est="mio">Ya es mío</button><button type="button" class="estado ${x.est === "pagando" ? "sel" : ""}" data-est="pagando">Lo estoy pagando</button></div>`;
     if(x.est === "pagando") h += `<div class="mini-lbl">¿Cuánto te falta por pagar?</div><div class="monto-wrap"><span>$</span><input type="text" inputmode="numeric" data-f="debo" placeholder="Saldo de la deuda" value="${m(x.debo)}"></div>`;
@@ -365,6 +366,7 @@ VISTAS_INIT.balance = () => {
     const k = f.dataset.g, i = +f.dataset.i;
     if(e.target.hasAttribute("data-q")){ S.items[k].splice(i, 1); if(!S.items[k].length) S.items[k].push({}); pintar(k); }
     if(e.target.dataset.est){ S.items[k][i].est = e.target.dataset.est; pintar(k); }
+    if(e.target.dataset.ing){ S.items[k][i].t = e.target.dataset.ing; pintar(k); }
   });
   nav(() => {
     leer(); agregar();
@@ -382,7 +384,7 @@ function calcular(){
   const tipos = INV.filter(([k]) => n(k) > 0).map(([k,t]) => ({ t, v:n(k) })).sort((a,c) => c.v - a.v);
   return { ah, inv, ot, de, ing, ga, activos, patrimonio: activos - de, invMes: n("inv_mes"), tipos,
     colchon: ga > 0 ? ah / ga : null, tasa: ing > 0 ? (ing - ga) / ing : null,
-    deudaPct: activos > 0 ? de / activos : (de > 0 ? 1 : 0), invPct: activos > 0 ? inv / activos : 0, aportePct: ing > 0 ? n("inv_mes") / ing : null };
+    deudaPct: activos > 0 ? de / activos : (de > 0 ? 1 : 0), ingVar: sum(S.items.ingresos.filter(x => x.t === "var")), invPct: activos > 0 ? inv / activos : 0, aportePct: ing > 0 ? n("inv_mes") / ing : null };
 }
 const fraseHero = c => c.patrimonio < 0 ? "Hoy debes más de lo que tienes, y está bien saberlo: ver el número es el primer paso para moverlo."
   : c.patrimonio === 0 ? "Estás en el punto de partida. Desde aquí todo suma." : "Esto es lo que has construido. Cada peso que ves aquí tiene tu esfuerzo.";
@@ -413,7 +415,7 @@ VISTAS.panel = () => {
     <div class="medidor"><div class="fila"><span class="nombre">Mi colchón</span><span class="valor">${c.colchon === null ? "—" : c.colchon.toFixed(1).replace(".0","") + " meses"}</span></div>
       <div class="barra"><b data-w="${c.colchon === null ? 0 : pct(c.colchon/6*100)}"></b></div><p class="msg">${msgColchon(c.colchon)}</p></div>
     <div class="medidor"><div class="fila"><span class="nombre">Lo que me queda cada mes</span><span class="valor">${c.tasa === null ? "—" : Math.round(c.tasa*100) + "%"}</span></div>
-      <div class="barra"><b class="verde" data-w="${c.tasa === null ? 0 : pct(c.tasa/.2*100)}"></b></div><p class="msg">${msgTasa(c.tasa)}</p></div>
+      <div class="barra"><b class="verde" data-w="${c.tasa === null ? 0 : pct(c.tasa/.2*100)}"></b></div><p class="msg">${msgTasa(c.tasa)}${c.ingVar ? ` Parte de lo que te entra es variable (${cop(c.ingVar)} al mes en promedio): con ingresos que cambian, un colchón de 6 meses te da más tranquilidad.` : ""}</p></div>
     <div class="medidor"><div class="fila"><span class="nombre">Mis deudas frente a lo que tengo</span><span class="valor">${c.de === 0 ? "0%" : (c.deudaPct > 1 ? "100%+" : Math.round(c.deudaPct*100) + "%")}</span></div>
       <div class="barra"><b class="rosa" data-w="${pct(c.deudaPct*100)}"></b></div><p class="msg">${msgDeuda(c.deudaPct, c)}</p></div>
     <div class="medidor"><div class="fila"><span class="nombre">Lo que tengo invertido</span><span class="valor">${c.inv ? Math.round(c.invPct*100) + "%" : "—"}</span></div>
@@ -490,7 +492,7 @@ function docPDF(){
     ${lista("Inversiones", I.inversiones, x => fila(x.n || (x.tj !== "" && x.tj !== undefined ? TIPOS_INV[+x.tj]?.[1] : "") || "Inversión", m(x.v), x.n && x.tj !== "" && x.tj !== undefined ? TIPOS_INV[+x.tj]?.[1] : ""))}
     ${lista("Bienes", I.bienes, x => fila(x.n || "Bien", m(x.v), x.est === "pagando" ? `lo estoy pagando, me faltan ${m(x.debo)}` : x.est === "mio" ? "ya es mío" : ""))}
     ${lista("Deudas", I.deudas, x => fila(x.n || (x.tj !== "" && x.tj !== undefined ? TIPOS_DEUDA[+x.tj]?.[1] : "") || "Deuda", m(x.v)))}
-    ${lista("Lo que entra cada mes", I.ingresos, x => fila(x.n || "Ingreso", m(x.v)))}
+    ${lista("Lo que entra cada mes", I.ingresos, x => fila(x.n || "Ingreso", m(x.v), x.t === "var" ? "variable: promedio al mes" : "fijo"))}
     ${lista("Lo que gasto cada mes", I.gastos, x => fila(x.n || "Gasto", m(x.v), x.t === "var" ? "variable" : "fijo"))}
     ${lista("Lo que ahorro o invierto cada mes", I.aportes, x => fila(x.n || "Aporte", m(x.v)))}
     <h2>Carta a mi yo del 2027</h2><p>${esc(S.carta)}</p>
