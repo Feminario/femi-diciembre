@@ -35,7 +35,7 @@ p{ margin:0 0 14px; }
 .suave{ color:var(--morado-suave); font-size:13px; }
 
 label{ display:block; font-weight:700; font-size:13.5px; color:var(--morado-oscuro); margin:18px 0 6px; }
-input[type=text], textarea, select{
+input[type=text], input[type=email], input[type=tel], input[type=search], textarea, select{
   width:100%; padding:13px 16px; border-radius:16px; border:1.5px solid rgba(126,132,174,.28);
   font-size:15px; background:rgba(255,255,255,.88); font-family:inherit; color:var(--texto);
 }
